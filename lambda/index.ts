@@ -1,10 +1,23 @@
-import { join } from 'path'
-import { getS3FriendlyDate } from './util'
-import { putFile } from './s3'
+import { BestTrack } from './constants'
+import getData from './tasks/getData'
 
 export const handler = async () => {
-  const baseDir = getS3FriendlyDate(new Date())
-  const filePath = join(baseDir, 'test.txt')
+  try {
+    const data = await getData()
 
-  await putFile(filePath, Date.now().toString())
+    const parsedVideoIds = new Set<string>()
+    data.parsedVideos.forEach((v) => parsedVideoIds.add(v.id))
+
+    const toExtract = data.youtubeVideos.filter(
+      (v) => !parsedVideoIds.has(v.id)
+    )
+
+    // new task: extractBestTracks(toExtract)
+    const extracted: BestTrack[] = []
+
+    // const manuallySet = data.missingTracks.filter((t) => !!t.spotify_id)
+  } catch (e) {
+    console.error('handler failed')
+    console.error(e)
+  }
 }
