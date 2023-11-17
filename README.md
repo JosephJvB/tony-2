@@ -1,5 +1,8 @@
 # Welcome to your CDK TypeScript project
 
+change outdir
+https://github.com/aws/aws-cdk/issues/18743
+
 This is a blank project for CDK development with TypeScript.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
