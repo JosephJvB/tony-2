@@ -1,3 +1,6 @@
-export const S3_DIRS = {
-  TEST: 'test',
-} as const
+export type BestTrack = {
+  name: string
+  artist: string
+  link: string
+  year: number
+}
