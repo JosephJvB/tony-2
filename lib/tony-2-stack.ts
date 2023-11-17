@@ -9,6 +9,12 @@ export class Tony2Stack extends cdk.Stack {
       versioned: false,
       bucketName: 'tony2-backups',
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
+      lifecycleRules: [
+        {
+          id: 'expire-old-backups',
+          expiration: cdk.Duration.days(300),
+        },
+      ],
     })
 
     const cronEvent = new cdk.aws_events.Rule(this, 'dailyEvent', {
@@ -34,7 +40,7 @@ export class Tony2Stack extends cdk.Stack {
     const daKingOfDaHighway = new cdk.aws_lambda.Function(this, 'kodh', {
       runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
       code: cdk.aws_lambda.Code.fromAsset('dist/lambda'),
-      handler: 'kodh/index.handler',
+      handler: 'index.handler',
       events: [],
       environment: {
         S3_BUCKET: backupsBucket.bucketName,
