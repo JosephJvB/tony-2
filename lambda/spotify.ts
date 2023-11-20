@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { BestTrack } from './constants'
+import { BestTrackProps } from './videoDescriptions'
+import { BestTrack } from './tasks/extractTracks'
 
 export const SPOTIFY_JVB_USERID = 'xnmacgqaaa6a1xi7uy2k1fe7w'
 export const SPOTIFY_ID_LENGTH = 22
@@ -235,6 +236,7 @@ export const findTrack = async (
     if (res.data.tracks.items.length === 0 && retry) {
       return findTrack(
         {
+          ...track,
           name: normalizeTrackName(track as BestTrack),
           artist: normalizeArtistName(track as BestTrack),
           year: normalizeYear(track as BestTrack) as any,
@@ -470,15 +472,15 @@ export const extractSpotifyId = (link: string, type: 'album' | 'track') => {
   return id
 }
 
-export const getYearFromPlaylist = (p: SpotifyPlaylist) => {
-  if (!p.name.startsWith(PLAYLIST_NAME_PREFIX)) {
+export const getYearFromPlaylistName = (name: string) => {
+  if (!name.startsWith(PLAYLIST_NAME_PREFIX)) {
     return null
   }
 
-  return parseInt(p.name.replace(PLAYLIST_NAME_PREFIX, ''))
+  return parseInt(name.replace(PLAYLIST_NAME_PREFIX, ''))
 }
 
-export const normalizeArtistName = (track: BestTrack) => {
+export const normalizeArtistName = (track: BestTrackProps) => {
   let normalized = track.artist
     .replace(/ & /g, ' ')
     .replace(/ and /g, ' ')
@@ -491,7 +493,7 @@ export const normalizeArtistName = (track: BestTrack) => {
 
   return normalized
 }
-export const normalizeTrackName = (track: BestTrack) => {
+export const normalizeTrackName = (track: BestTrackProps) => {
   let normalized = track.name
     .replace(/"/g, '')
     .replace(/'/g, '')
@@ -521,12 +523,12 @@ export const normalizeTrackName = (track: BestTrack) => {
   return normalized
 }
 
-export const normalizeYear = (track: BestTrack) => {
+export const normalizeYear = (track: BestTrackProps) => {
   // widen search by omitting year
   return undefined
 }
 
-export const normalizeLink = (track: BestTrack) => {
+export const normalizeLink = (track: BestTrackProps) => {
   // widen search by omitting link
   return ''
 }

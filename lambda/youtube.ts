@@ -4,7 +4,7 @@ export const YOUTUBE_PLAYIST_ID = 'PLP4CSgl7K7or84AAhr7zlLNpghEnKWu2c'
 
 const BASE_URL = 'https://www.googleapis.com/youtube/v3'
 
-export type YoutubePlaylistItem = {
+export type YoutubeVideo = {
   id: string
   snippet: {
     publishedAt: string
@@ -34,7 +34,7 @@ export type YoutubePlaylistItemQuery = ApiQuery & {
 
 export const getYoutubePlaylistItems = async () => {
   try {
-    const allItems: YoutubePlaylistItem[] = []
+    const allItems: YoutubeVideo[] = []
     let pageToken: string | undefined
 
     do {
@@ -49,7 +49,7 @@ export const getYoutubePlaylistItems = async () => {
         maxResults: 50,
         ...(!!pageToken && { pageToken }),
       }
-      const res: AxiosResponse<ApiResponse<YoutubePlaylistItem>> = await axios({
+      const res: AxiosResponse<ApiResponse<YoutubeVideo>> = await axios({
         method: 'get',
         url: `${BASE_URL}/youtubeplaylistItems`,
         params,

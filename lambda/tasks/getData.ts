@@ -6,7 +6,7 @@ import { SHEETS, getRows, rowToTrack, rowToVideo } from '../googleSheets'
 import {
   getMyPlaylists,
   getPlaylistItems,
-  getYearFromPlaylist,
+  getYearFromPlaylistName,
   setAccessToken,
 } from '../spotify'
 
@@ -53,7 +53,7 @@ export default async function () {
   await setAccessToken()
   const allSpotifyPlaylists = await getMyPlaylists()
   for (const playlist of allSpotifyPlaylists) {
-    const year = getYearFromPlaylist(playlist)
+    const year = getYearFromPlaylistName(playlist.name)
     if (year === null) {
       continue
     }
