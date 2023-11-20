@@ -21,3 +21,20 @@ several lambdas that can invokeasync each other, sure why not
 if I want I can turn it into a state machine / queue driven thingo
 can save backups of things to s3 too yayuh
 so lets have an s3 bucket too
+
+V Slow tsc build
+╰─➤  tsc --diagnostics
+Files:              2986
+Lines:           1919999
+Identifiers:     1729381
+Symbols:          888426
+Types:            306871
+Instantiations:   114665
+Memory used:    1932553K
+I/O read:          0.55s
+I/O write:         0.01s
+Parse time:        3.34s
+Bind time:         1.05s
+Check time:        3.97s
+Emit time:         0.07s
+Total time:        8.42s

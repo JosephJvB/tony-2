@@ -4,19 +4,48 @@ import { BestTrack } from './extractTracks'
 
 export default async function (
   fromVideoDescriptions: BestTrack[],
-  fromSpreadsheet: MissingTrack[]
+  missingTracks: MissingTrack[]
 ) {
+  const withSpotifyId = missingTracks.filter((t) => !!t.spotify_id)
+  console.log(
+    '  >',
+    withSpotifyId.length,
+    'manually added spotify ids from spreadsheet'
+  )
+
   const idsToGet: string[] = [
     ...fromVideoDescriptions
       .filter((v) => v.spotifyId)
       .map((v) => v.spotifyId as string),
-    ...fromSpreadsheet.map((t) => t.spotify_id),
+    ...withSpotifyId.map((t) => t.spotify_id),
   ]
   console.log('  >', idsToGet.length, 'ids to batch lookup in spotify')
 
+  const spotifyIdMap = await getByBatch(idsToGet)
+  console.log('  >', spotifyIdMap.size, 'tracks found by batch')
+
+  // exclude missingTracks
+  // already failed to be found by search on previous run
+  const toFind = fromVideoDescriptions.filter(
+    (t) => !t.spotifyId || !spotifyIdMap.has(t.spotifyId)
+  )
+  console.log('  >', toFind.length, 'tracks to find in spotify')
+
+  const customIdMap = await findTracks(toFind)
+  console.log('  >', customIdMap.size, 'tracks found by search')
+
+  return {
+    spotifyIdMap,
+    customIdMap,
+  }
+}
+
+export const getByBatch = async (ids: string[]) => {
+  const unique = [...new Set(ids)]
+
   const spotifyIdMap = new Map<string, SpotifyTrack>()
-  for (let i = 0; i < idsToGet.length; i += 50) {
-    const batch = idsToGet.slice(i, i + 50)
+  for (let i = 0; i < unique.length; i += 50) {
+    const batch = unique.slice(i, i + 50)
 
     const result = await getTracks(batch)
 
@@ -25,14 +54,11 @@ export default async function (
     })
   }
 
-  // don't bother trying to find tracks from spreadsheet
-  // they already failed to be found first time
-  // over time this operation woudld take ages
+  return spotifyIdMap
+}
+
+export const findTracks = async (toFind: BestTrack[]) => {
   const customIdMap = new Map<string, SpotifyTrack>()
-  const toFind = fromVideoDescriptions.filter(
-    (t) => !t.spotifyId || !spotifyIdMap.has(t.spotifyId)
-  )
-  console.log('  >', toFind.length, 'tracks to find in spotify')
 
   let count = 1
   for (const t of toFind) {
@@ -46,8 +72,5 @@ export default async function (
     customIdMap.set(t.id, result.tracks.items[0])
   }
 
-  return {
-    spotifyIdMap,
-    customIdMap,
-  }
+  return customIdMap
 }

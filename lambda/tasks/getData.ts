@@ -10,6 +10,13 @@ import {
   setAccessToken,
 } from '../spotify'
 
+export type LoadedSpotifyPlaylist = {
+  id: string
+  name: string
+  description: string
+  trackIds: string[]
+}
+
 export default async function () {
   const filesToSave: Array<{
     name: string
@@ -45,11 +52,7 @@ export default async function () {
     data: JSON.stringify(parsedVideos, null, 2),
   })
 
-  const spotifyPlaylists: Array<{
-    id: string
-    name: string
-    trackIds: string[]
-  }> = []
+  const spotifyPlaylists: Array<LoadedSpotifyPlaylist> = []
   await setAccessToken()
   const allSpotifyPlaylists = await getMyPlaylists()
   for (const playlist of allSpotifyPlaylists) {
@@ -62,6 +65,7 @@ export default async function () {
     spotifyPlaylists.push({
       id: playlist.id,
       name: playlist.name,
+      description: playlist.description,
       trackIds: items.map((i) => i.track.id),
     })
   }
@@ -78,9 +82,12 @@ export default async function () {
     })
   )
 
+  const beenParsed = new Set(parsedVideos.map((v) => v.id))
+  const toParse = youtubeVideos.filter((v) => !beenParsed.has(v.id))
+
   return {
-    youtubeVideos,
-    parsedVideos,
+    allVideos: youtubeVideos,
+    toParse,
     missingTracks,
     spotifyPlaylists,
   }

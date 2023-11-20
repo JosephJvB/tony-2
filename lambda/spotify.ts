@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { BestTrackProps } from './videoDescriptions'
-import { BestTrack } from './tasks/extractTracks'
+import { BestTrack, BestTrackProps } from './tasks/extractTracks'
+import { MISSING_TRACKS_LINK } from './googleSheets'
 
 export const SPOTIFY_JVB_USERID = 'xnmacgqaaa6a1xi7uy2k1fe7w'
 export const SPOTIFY_ID_LENGTH = 22
@@ -12,6 +12,7 @@ export const SPOTIFY_REQUIRED_SCOPES = [
   'playlist-read-collaborative',
 ].join(' ')
 export const PLAYLIST_NAME_PREFIX = "TONY'S TOP TRACKS "
+export const PLAYLIST_DESCRIPTION = `missing tracks list: ${MISSING_TRACKS_LINK}`
 
 export const API_BASE_URL = 'https://api.spotify.com/v1'
 export const ACCOUNTS_BASE_URL = 'https://accounts.spotify.com/api'
@@ -311,7 +312,7 @@ export const createPlaylist = async (year: number) => {
   try {
     const newPlaylist: Omit<SpotifyPlaylist, 'id' | 'tracks'> = {
       name: `${PLAYLIST_NAME_PREFIX}${year}`,
-      description: '',
+      description: PLAYLIST_DESCRIPTION,
       public: true,
       collaborative: false,
     }

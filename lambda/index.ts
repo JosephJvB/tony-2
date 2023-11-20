@@ -1,93 +1,41 @@
-import {
-  SpotifyPlaylist,
-  SpotifyTrack,
-  addPlaylistItems,
-  createPlaylist,
-  getYearFromPlaylistName,
-} from './spotify'
+import { setAccessToken, setBasicToken } from './spotify'
 import extractTracks from './tasks/extractTracks'
 import getData from './tasks/getData'
+import getDiff from './tasks/getDiff'
 import spotifyLookups from './tasks/spotifyLookups'
+import updatePlaylists from './tasks/updatePlaylists'
+import updateSpreadsheets from './tasks/updateSpreadsheets'
 
 export const handler = async () => {
   try {
+    // 1. auth
+    await setBasicToken()
+    await setAccessToken()
+
+    /**
+     * get data:
+     * - Spreadsheet: already parsed youtube videos
+     * - Spreadsheet: missing tracks
+     * - YoutubeAPI: playlist items
+     * - SpotifyAPI: playlist items
+     */
     const data = await getData()
 
-    const parsedVideoIds = new Set<string>()
-    data.parsedVideos.forEach((v) => parsedVideoIds.add(v.id))
-
-    const toExtract = data.youtubeVideos.filter(
-      (v) => !parsedVideoIds.has(v.id)
-    )
-    console.log('  >', toExtract.length, 'best track videos to pull from')
-
-    const fromVideoDescriptions = extractTracks(toExtract)
+    // 3. parse youtube video descriptions
+    const fromVideoDescriptions = extractTracks(data.toParse)
     console.log('  >', fromVideoDescriptions.length, 'youtube tracks to find')
 
-    const fromSpreadsheet = data.missingTracks.filter((t) => !!t.spotify_id)
-    console.log(
-      '  >',
-      fromSpreadsheet.length,
-      'manually added spotify ids from spreadsheet'
-    )
+    // 4. find tracks in spotify
+    const maps = await spotifyLookups(fromVideoDescriptions, data.missingTracks)
 
-    const maps = await spotifyLookups(fromVideoDescriptions, fromSpreadsheet)
+    // 5. get diff
+    const diff = getDiff(fromVideoDescriptions, data.missingTracks, maps)
 
-    // this needs to move out to a task
-    const byYear = new Map<number, SpotifyTrack[]>()
-    fromVideoDescriptions.forEach((t) => {
-      const found =
-        (t.spotifyId && maps.spotifyIdMap.get(t.spotifyId)) ??
-        maps.customIdMap.get(t.id)
-      if (!found) {
-        return
-      }
+    // 6. update playlists
+    await updatePlaylists(diff.found, data.spotifyPlaylists)
 
-      const soFar = byYear.get(t.year) ?? []
-      byYear.set(t.year, [...soFar, found])
-    })
-
-    fromSpreadsheet.forEach((t) => {
-      const found =
-        (t.spotify_id && maps.spotifyIdMap.get(t.spotify_id)) ??
-        maps.customIdMap.get(t.id)
-      if (!found) {
-        return
-      }
-
-      const year = new Date(t.date).getUTCFullYear()
-
-      const soFar = byYear.get(year) ?? []
-      byYear.set(year, [...soFar, found])
-    })
-
-    for (const [year, tracks] of byYear.entries()) {
-      const loadedPlaylist = data.spotifyPlaylists.find(
-        (p) => getYearFromPlaylistName(p.name) == year
-      )
-      let playlistId = loadedPlaylist?.id
-      const existingTrackIds = new Set<string>(loadedPlaylist?.trackIds ?? [])
-
-      if (!loadedPlaylist) {
-        const createdPaylist = await createPlaylist(year)
-        playlistId = createdPaylist.id
-      }
-      if (!playlistId) {
-        const vars = JSON.stringify({
-          year,
-        })
-        throw new Error(`failed to find/create playlistId, ${vars}`)
-      }
-
-      const toAdd = [
-        ...new Set(
-          tracks.filter((t) => !existingTrackIds.has(t.id)).map((t) => t.id)
-        ),
-      ]
-      if (toAdd.length) {
-        await addPlaylistItems(playlistId, toAdd)
-      }
-    }
+    // 7. update spreadsheets [parsedVideos, missing]
+    await updateSpreadsheets(data.allVideos, diff.missing)
   } catch (e) {
     console.error('handler failed')
     console.error(e)

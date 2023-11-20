@@ -19,13 +19,15 @@ export const SHEETS = {
     },
   },
   PARSED_VIDEOS: {
-    ID: 123,
+    ID: 123, // not so relevant. only need the link to the missing tracks shet
     NAME: 'parsed videos',
     RANGES: {
       ALL_ROWS: 'A2:C',
     },
   },
 } as const
+
+export const MISSING_TRACKS_LINK = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit#gid=${SHEETS.MISSING_TRACKS.ID}?usp=sharing`
 
 export type MissingTrack = {
   id: string
@@ -49,7 +51,7 @@ export const trackToRow = (track: MissingTrack): string[] => [
   track.artist,
   track.date,
   track.link,
-  track.spotify_id ?? '',
+  track.spotify_id,
 ]
 export type ParsedVideo = {
   id: string
