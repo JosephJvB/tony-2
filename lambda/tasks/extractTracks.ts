@@ -86,9 +86,13 @@ export const extractTrackList = (item: YoutubeVideo) => {
       continue
     }
 
+    // TODO:
+    // change logic here
+    // current: line doesnt match expected format: exit extracting bestTracks
+    // prefer: line doesnt match format: keep going till (? double linebreak?, ...meh...?)
     const youtubeTrack = getYoutubeTrackProps(line)
     if (!youtubeTrack) {
-      // console.log('exit', JSON.stringify(line))
+      console.log('exit', JSON.stringify(line))
       break // assume best tracks section has ended
     }
 
