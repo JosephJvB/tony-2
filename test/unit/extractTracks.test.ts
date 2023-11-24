@@ -1,31 +1,27 @@
 import {
-  containsBestTracks,
   extractTrackList,
   getYoutubeTrackProps,
+  isBestTrackVideo,
 } from '../../lambda/tasks/extractTracks'
 import { YoutubeVideo } from '../../lambda/youtube'
 
 describe('unit/extractBestTracks.ts', () => {
-  describe('#extractTrackList', () => {
-    // const consoleErrorSpy = jest
-    //   .spyOn(console, 'error')
-    //   .mockImplementation(jest.fn())
-
-    it('skips non-needledrop videos', () => {
-      const item = {
+  describe('#isBestTrackVideo', () => {
+    it('rejects non-needledrop videos', () => {
+      const v = {
         snippet: {
           channelId: 'tony',
           videoOwnerChannelId: 'not-tony',
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = isBestTrackVideo(v)
 
-      expect(result.length).toBe(0)
+      expect(result).toBe(false)
     })
 
     it('skips private videos', () => {
-      const item = {
+      const v = {
         snippet: {
           channelId: 'tony',
           videoOwnerChannelId: 'tony',
@@ -35,13 +31,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = isBestTrackVideo(v)
 
-      expect(result.length).toBe(0)
+      expect(result).toBe(false)
     })
 
     it('skips raw review videos', () => {
-      const item = {
+      const v = {
         snippet: {
           channelId: 'tony',
           videoOwnerChannelId: 'tony',
@@ -52,10 +48,15 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = isBestTrackVideo(v)
 
-      expect(result.length).toBe(0)
+      expect(result).toBe(false)
     })
+  })
+
+  describe('#extractTrackList', () => {
+    // const consoleErrorSpy = jest
+    //   .spyOn(console, 'error')
 
     it('can parse last item', () => {
       const item = {
@@ -604,12 +605,14 @@ describe('unit/extractBestTracks.ts', () => {
 
   describe('#getYoutubeTrackProps', () => {
     // actually can't parse this
-    it.skip('can parse Aesop Rock / Homeboy Sandman EP', () => {
+    // but i should handle this better!
+    it('can parse Aesop Rock / Homeboy Sandman EP', () => {
       const input =
         'Aesop Rock / Homeboy Sandman EP\nhttp://www.theneedledrop.com/articles/2016/10/aesop-rock-homeboy-sandman-lice-two-still-buggin'
 
       const track = getYoutubeTrackProps(input)
 
+      console.log(track)
       expect(track).not.toBeNull()
     })
   })

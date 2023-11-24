@@ -446,6 +446,10 @@ export const updatePlaylistDescription = async (
 // https://open.spotify.com/track/1nxudYVyc5RLm8LrSMzeTa?si=-G3WGzRgTDq8OuRa688FMg
 // https://open.spotify.com/album/3BFHembK3fNseQR5kAEE2I
 export const extractSpotifyId = (link: string, type: 'album' | 'track') => {
+  if (!link) {
+    return null
+  }
+
   let url: URL | null = null
 
   try {

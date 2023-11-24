@@ -27,7 +27,8 @@ export default async function (
   // exclude missingTracks
   // already failed to be found by search on previous run
   const toFind = fromVideoDescriptions.filter(
-    (t) => !t.spotifyId || !spotifyIdMap.has(t.spotifyId)
+    (t) =>
+      t.name && t.artist && (!t.spotifyId || !spotifyIdMap.has(t.spotifyId))
   )
   console.log('  >', toFind.length, 'tracks to find in spotify')
 
