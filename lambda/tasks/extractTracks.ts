@@ -20,7 +20,14 @@ export const BEST_TRACK_PREFIXES = [
   '!!!BEST SONG',
   '!!!FAV TRACK',
 ]
-export const MEH_TRACK_HEADERS_UPPER = new Set(['...MEH...', '…MEH…'])
+export const MEH_TRACK_HEADERS_UPPER = new Set([
+  '...MEH...',
+  'MEH...',
+  '...MEH',
+  '…MEH…',
+  'MEH…',
+  '…MEH',
+])
 export const RAW_REVIEW_TITLES = [
   'MIXTAPE',
   'EP',
@@ -28,21 +35,14 @@ export const RAW_REVIEW_TITLES = [
   'TRACK',
   'COMPILATION',
 ]
-export const OLD_TITLE_PREFIXES = ['FAV TRACKS:', 'FAV & WORST TRACKS:']
+export const FAV_TRACKS_ONLY = 'FAV TRACKS:'
+export const FAV_AND_WORST = 'FAV & WORST TRACKS:'
 
 export default function (toExtract: YoutubeVideo[]) {
   return toExtract
     .filter((v) => isBestTrackVideo(v))
     .flatMap((v) => {
-      const oldPrefix = OLD_TITLE_PREFIXES.find((p) =>
-        v.snippet.title.startsWith(p)
-      )
-      const bestTracks: BestTrackProps[] = []
-      if (!!oldPrefix) {
-        bestTracks.push(...extractTrackList_oldVideos(v))
-      } else {
-        bestTracks.push(...extractTrackList(v))
-      }
+      const bestTracks = extractTrackList(v)
 
       const year = new Date(v.snippet.publishedAt).getFullYear()
 
@@ -59,12 +59,18 @@ export default function (toExtract: YoutubeVideo[]) {
 export const extractTrackList = (v: YoutubeVideo) => {
   const lines = descriptionToLines(v.snippet.description)
 
-  const startIdx = lines.findIndex(
+  let startIdx = lines.findIndex(
     (l) => !!BEST_TRACK_PREFIXES.find((pref) => l.startsWith(pref))
   )
-  const endIdx = lines.findIndex(
+  let endIdx = lines.findIndex(
     (l) => !!MEH_TRACK_HEADERS_UPPER.has(l.toUpperCase())
   )
+
+  // fix end and start
+  if (v.snippet.title.startsWith(FAV_TRACKS_ONLY)) {
+  }
+  if (v.snippet.title.startsWith(FAV_AND_WORST)) {
+  }
 
   if (startIdx === -1 || endIdx === -1) {
     console.error('failed to find bestTrackSection', {
@@ -77,7 +83,7 @@ export const extractTrackList = (v: YoutubeVideo) => {
   }
 
   const trackList: BestTrackProps[] = []
-  lines.slice(startIdx, endIdx).forEach((l) => {
+  lines.slice(startIdx + 1, endIdx).forEach((l) => {
     const track = getYoutubeTrackProps(l)
     if (track) {
       trackList.push(track)
@@ -92,25 +98,6 @@ export const extractTrackList = (v: YoutubeVideo) => {
       title: v.snippet.title,
     })
   }
-
-  return trackList
-}
-
-export const extractTrackList_oldVideos = (v: YoutubeVideo) => {
-  const trackList: BestTrackProps[] = []
-
-  const lines = descriptionToLines(v.snippet.description)
-
-  lines.forEach((line) => {
-    if (line.toLowerCase().startsWith('amazon link')) {
-      return
-    }
-
-    const youtubeTrack = getYoutubeTrackProps(line)
-    if (youtubeTrack) {
-      trackList.push(youtubeTrack)
-    }
-  })
 
   return trackList
 }
