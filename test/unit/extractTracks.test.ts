@@ -58,8 +58,8 @@ describe('unit/extractBestTracks.ts', () => {
     // const consoleErrorSpy = jest
     //   .spyOn(console, 'error')
 
-    it('can parse last item', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 10/22/23', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -75,13 +75,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
     })
 
-    it('can parse 7/26 (Taylor Swift, J. Cole, Gorillaz, Kero Kero Bonito)', () => {
-      const item = {
+    it('can extract tracklist: 7/26 (Taylor Swift, J. Cole, Gorillaz, Kero Kero Bonito)', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -97,14 +97,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(13)
     })
 
-    it('can parse Weekly Track Roundup: 11/21/22', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 11/21/22', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -120,7 +120,7 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result).toEqual([
@@ -197,8 +197,8 @@ describe('unit/extractBestTracks.ts', () => {
       ])
     })
 
-    it('can parse Weekly Track Roundup: 10/16/22', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 10/16/22', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -214,14 +214,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(6)
     })
 
-    it('can parse Weekly Track Roundup: 11/11', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 11/11', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -237,14 +237,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(9)
     })
 
-    it('can parse Weekly Track Roundup: 2/22/21', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 2/22/21', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -260,13 +260,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
     })
 
-    it('can parse FAV & WORST TRACKS: 8/21', () => {
-      const item = {
+    it('can extract tracklist: FAV & WORST TRACKS: 8/21', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -282,13 +282,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
     })
 
-    it('can parse FAV & WORST TRACKS: 7/24', () => {
-      const item = {
+    it('can extract tracklist: FAV & WORST TRACKS: 7/24', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -304,7 +304,7 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(8)
@@ -352,8 +352,8 @@ describe('unit/extractBestTracks.ts', () => {
       ])
     })
 
-    it('can parse FAV & WORST TRACKS: 7/17', () => {
-      const item = {
+    it('can extract tracklist: FAV & WORST TRACKS: 7/17', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -369,13 +369,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
     })
 
-    it('can parse FAV TRACKS: 7/10', () => {
-      const item = {
+    it('can extract tracklist: FAV TRACKS: 7/10', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -390,14 +390,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(7)
     })
 
-    it('can parse FAV & WORST TRACKS: 7/31', () => {
-      const item = {
+    it('can extract tracklist: FAV & WORST TRACKS: 7/31', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -413,14 +413,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(14)
     })
 
-    it('can parse Weekly Track Roundup: 4/3/23', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 4/3/23', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -436,14 +436,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(11)
     })
 
-    it('can parse Weekly Track Roundup: 10/18', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 10/18', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -459,14 +459,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(10)
     })
 
-    it('can parse Weekly Track Roundup: 7/7', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 7/7', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -482,14 +482,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(5)
     })
 
-    it('can parse Weekly Track Roundup: 9/8', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 9/8', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -505,14 +505,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(11)
     })
 
-    it('can parse BEST & WORST TRACKS: 11/14', () => {
-      const item = {
+    it('can extract tracklist: BEST & WORST TRACKS: 11/14', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -528,13 +528,13 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
     })
 
-    it('can parse Weekly Track Roundup: 8/26', () => {
-      const item = {
+    it('can extract tracklist: Weekly Track Roundup: 8/26', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -550,14 +550,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(14)
     })
 
-    it('can parse FAV & WORST TRACKS: 8/7', () => {
-      const item = {
+    it('can extract tracklist: FAV & WORST TRACKS: 8/7', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -573,14 +573,14 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(10)
     })
 
-    it('can parse BEST & WORST TRACKS: 10/2', () => {
-      const item = {
+    it('can extract tracklist: BEST & WORST TRACKS: 10/2', () => {
+      const v = {
         id: 'UExQNENTZ2w3Szdvcjg0QUFocjd6bExOcGdoRW5LV3UyYy4xNEMzREYwQzc3REUwNDY0',
         snippet: {
           channelId: 'tony',
@@ -596,7 +596,7 @@ describe('unit/extractBestTracks.ts', () => {
         },
       } as YoutubeVideo
 
-      const result = extractTrackList(item)
+      const result = extractTrackList(v)
 
       expect(result.length).toBeGreaterThan(0)
       expect(result.length).toBe(5)
@@ -606,7 +606,7 @@ describe('unit/extractBestTracks.ts', () => {
   describe('#getYoutubeTrackProps', () => {
     // actually can't parse this
     // but i should handle this better!
-    it('can parse Aesop Rock / Homeboy Sandman EP', () => {
+    it('can extract tracklist: Aesop Rock / Homeboy Sandman EP', () => {
       const input =
         'Aesop Rock / Homeboy Sandman EP\nhttp://www.theneedledrop.com/articles/2016/10/aesop-rock-homeboy-sandman-lice-two-still-buggin'
 

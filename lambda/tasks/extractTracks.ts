@@ -128,7 +128,9 @@ export const getYoutubeTrackProps = (line: string) => {
     link: link ?? '',
   }
 }
-
+// i can get SECTIONS by splittin on \n\n\n
+// then find the BEST_TRACK_SECTION
+// then try parse those lines only
 export const descriptionToLines = (description: string) => {
   return description
     .replace(/–/g, '-')
