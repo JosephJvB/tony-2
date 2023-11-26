@@ -1,4 +1,5 @@
 import { setAccessToken, setBasicToken } from './spotify'
+import { loadSsmParams } from './ssm'
 import extractTracks from './tasks/extractTracks'
 import getData from './tasks/getData'
 import getTrackDiff from './tasks/getTrackDiff'
@@ -8,7 +9,9 @@ import updateSpreadsheets from './tasks/updateSpreadsheets'
 
 export const handler = async () => {
   try {
-    // 1. auth
+    // 1. load credentials
+    await loadSsmParams()
+    // spotify
     await setBasicToken()
     await setAccessToken()
 

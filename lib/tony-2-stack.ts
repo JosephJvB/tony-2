@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
+import { join } from 'path'
 
 export class Tony2Stack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -62,31 +63,26 @@ export class Tony2Stack extends cdk.Stack {
         `/${id}/spotify/refresh-token`
       )
 
-    // lets try do this all all in one lambda I guess
-    // can split it later
-    // get youtube playlist items
-    // get spreadsheet rows:
-    //  - parsedYoutubeVideos
-    //  - missingTracks
-    // get spotifyPlaylists & items for valid years
-    //  - videos not parsed
-    //  - tracks with spotifyId from missingTracks
-    const daKingOfDaHighway = new cdk.aws_lambda.Function(this, 'kodh', {
-      runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
-      code: cdk.aws_lambda.Code.fromAsset('dist/lambda'),
-      handler: 'index.handler',
-      events: [],
-      environment: {
-        GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
-        GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
-        S3_BUCKET: backupsBucket.bucketName,
-        SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
-        SPOTIFY_SECRET_SSM: spotifySecret.parameterName,
-        SPOTIFY_SPOTIFY_REFRESH_TOKEN_SSM_SSM:
-          spotifyRefreshToken.parameterName,
-        YOUTUBE_API_KEY_SSM: youtubeApiKey.parameterName,
-      },
-    })
+    const daKingOfDaHighway = new cdk.aws_lambda_nodejs.NodejsFunction(
+      this,
+      'kodh',
+      {
+        memorySize: 128,
+        timeout: cdk.Duration.seconds(30),
+        runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
+        entry: join(__dirname, '../lambda/index.ts'),
+        handler: 'handler',
+        environment: {
+          S3_BUCKET: backupsBucket.bucketName,
+          GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
+          GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
+          SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
+          SPOTIFY_SECRET_SSM: spotifySecret.parameterName,
+          SPOTIFY_SPOTIFY_REFRESH_TOKEN_SSM: spotifyRefreshToken.parameterName,
+          YOUTUBE_API_KEY_SSM: youtubeApiKey.parameterName,
+        },
+      }
+    )
 
     googleClientEmail.grantRead(daKingOfDaHighway)
     googlePrivateKey.grantRead(daKingOfDaHighway)

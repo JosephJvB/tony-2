@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { BestTrack, BestTrackProps } from './tasks/extractTracks'
 import { MISSING_TRACKS_LINK } from './googleSheets'
-import { getSsmParameter } from './ssm'
+import { SSM_PARAMS } from './ssm'
 
 export const SPOTIFY_JVB_USERID = 'xnmacgqaaa6a1xi7uy2k1fe7w'
 export const SPOTIFY_ID_LENGTH = 22
@@ -82,35 +82,8 @@ export type SubmitCodeResponse = {
   access_token: string
 }
 
-let BASIC_TOKEN = ''
-let ACCESS_TOKEN = ''
-
-let CLIENT_ID: string | undefined
-let SECRET: string | undefined
-let REFRESH_TOKEN: string | undefined
-let BASIC_AUTH: string | undefined
-
-export const getCredentials = async () => {
-  if (!CLIENT_ID) {
-    CLIENT_ID = await getSsmParameter(process.env.SPOTIFY_CLIENT_ID_SSM)
-  }
-  if (!SECRET) {
-    SECRET = await getSsmParameter(process.env.SPOTIFY_SECRET_SSM)
-  }
-  if (!REFRESH_TOKEN) {
-    REFRESH_TOKEN = await getSsmParameter(process.env.SPOTIFY_REFRESH_TOKEN_SSM)
-  }
-  if (!BASIC_AUTH) {
-    BASIC_AUTH = Buffer.from(`${CLIENT_ID}:${SECRET}`).toString('base64')
-  }
-
-  return {
-    BASIC_AUTH,
-    CLIENT_ID,
-    SECRET,
-    REFRESH_TOKEN,
-  }
-}
+let BASIC_TOKEN: string | undefined
+let ACCESS_TOKEN: string | undefined
 
 export const setBasicToken = async () => {
   if (!BASIC_TOKEN) {
@@ -121,7 +94,6 @@ export const setBasicToken = async () => {
 
 export const requestBasicToken = async () => {
   try {
-    const credentials = await getCredentials()
     const res: AxiosResponse<{
       access_token: string
     }> = await axios({
@@ -132,8 +104,8 @@ export const requestBasicToken = async () => {
       },
       data: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: credentials.CLIENT_ID,
-        client_secret: credentials.SECRET,
+        client_id: SSM_PARAMS.SPOTIFY_CLIENT_ID,
+        client_secret: SSM_PARAMS.SPOTIFY_SECRET,
       }),
     })
 
@@ -163,8 +135,9 @@ export const setAccessToken = async () => {
 
 export const requestAccessToken = async () => {
   try {
-    const credentials = await getCredentials()
-
+    const basicAuth = Buffer.from(
+      `${SSM_PARAMS.SPOTIFY_CLIENT_ID}:${SSM_PARAMS.SPOTIFY_SECRET}`
+    ).toString('base64')
     const res: AxiosResponse<{
       access_token: string
     }> = await axios({
@@ -172,11 +145,11 @@ export const requestAccessToken = async () => {
       url: `${ACCOUNTS_BASE_URL}/token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${credentials.BASIC_AUTH}`,
+        Authorization: `Basic ${basicAuth}`,
       },
       data: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: credentials.REFRESH_TOKEN,
+        refresh_token: SSM_PARAMS.SPOTIFY_SPOTIFY_REFRESH_TOKEN,
       }),
     })
 
@@ -237,10 +210,6 @@ export const findTrack = async (
   try {
     const { name, artist, link, year } = track
 
-    // TODO:
-    // Big painful discovery
-    // exluding "track:" broadens the search, ie: less strict matching
-    // probably could just remove "track:" and "artist:" in retries...
     const params: SpotifySearchParams = {
       q: `track:${name} artist:${artist}`,
       type: 'track',
@@ -513,7 +482,13 @@ export const getYearFromPlaylistName = (name: string) => {
     return null
   }
 
-  return parseInt(name.replace(PLAYLIST_NAME_PREFIX, ''))
+  let year: number | null = null
+
+  try {
+    year = parseInt(name.replace(PLAYLIST_NAME_PREFIX, ''))
+  } catch {}
+
+  return year
 }
 
 export const normalizeArtistName = (track: BestTrackProps) => {

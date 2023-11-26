@@ -1,5 +1,5 @@
 import { google, sheets_v4 } from 'googleapis'
-import { getSsmParameter } from './ssm'
+import { SSM_PARAMS } from './ssm'
 
 export const BASE_SHEET_URL = 'https://docs.google.com/spreadsheets/d'
 export const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -73,32 +73,16 @@ export const videoToRow = (video: ParsedVideo): string[] => [
   video.total_tracks,
 ]
 
-let PRIVATE_KEY: string | undefined
-let CLIENT_EMAIL: string | undefined
-export const getCredentials = async () => {
-  if (!PRIVATE_KEY) {
-    PRIVATE_KEY = await getSsmParameter(process.env.GOOGLE_PRIVATE_KEY_SSM)
-  }
-  if (!CLIENT_EMAIL) {
-    CLIENT_EMAIL = await getSsmParameter(process.env.GOOGLE_CLIENT_EMAIL_SSM)
-  }
-  return {
-    PRIVATE_KEY,
-    CLIENT_EMAIL,
-  }
-}
-
 let _client: sheets_v4.Sheets | undefined
 export const getClient = async () => {
   if (!_client) {
     // https://stackoverflow.com/questions/30400341/environment-variables-containing-newlines-in-node
     // const privateKey = process.env.GOOGLE_SA_PRIVATE_KEY?.replace(/\\n/g, '\n')
-    const credentials = await getCredentials()
     const authClient = new google.auth.GoogleAuth({
       scopes: SCOPES,
       credentials: {
-        private_key: credentials.PRIVATE_KEY,
-        client_email: credentials.CLIENT_EMAIL,
+        private_key: SSM_PARAMS.GOOGLE_PRIVATE_KEY,
+        client_email: SSM_PARAMS.GOOGLE_CLIENT_EMAIL,
       },
     })
     _client = google.sheets({
