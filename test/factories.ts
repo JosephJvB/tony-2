@@ -1,5 +1,9 @@
 import { MissingTrack, ParsedVideo } from '../lambda/googleSheets'
-import { SpotifyTrack } from '../lambda/spotify'
+import {
+  PLAYLIST_NAME_PREFIX,
+  SpotifyPlaylist,
+  SpotifyTrack,
+} from '../lambda/spotify'
 import { BestTrack } from '../lambda/tasks/extractTracks'
 import { YoutubeVideo } from '../lambda/youtube'
 
@@ -77,9 +81,30 @@ export type LoadedSpotifyPlaylist = {
 export const createSpotifyPlaylist = (
   i: number,
   numTracks: number
+): SpotifyPlaylist => ({
+  id: `id_${i}`,
+  name: `${PLAYLIST_NAME_PREFIX}${i}`,
+  description: `description_${i}`,
+  public: true,
+  collaborative: false,
+  tracks: {
+    total: numTracks,
+    items: createList(
+      (tId: number) => ({
+        added_at: `added_at_${tId}`,
+        track: createSpotifyTrack(tId),
+      }),
+      numTracks
+    ),
+  },
+})
+
+export const createLoadedSpotifyPlaylist = (
+  i: number,
+  numTracks: number
 ): LoadedSpotifyPlaylist => ({
   id: `id_${i}`,
-  name: `name_${i}`,
+  name: `${PLAYLIST_NAME_PREFIX}${i}`,
   description: `description_${i}`,
   trackIds: createList((tId: number) => `trackId[${tId}]`, numTracks),
 })

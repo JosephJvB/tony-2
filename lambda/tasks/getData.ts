@@ -7,7 +7,6 @@ import {
   getMyPlaylists,
   getPlaylistItems,
   getYearFromPlaylistName,
-  setAccessToken,
 } from '../spotify'
 
 export type LoadedSpotifyPlaylist = {
@@ -53,7 +52,6 @@ export default async function () {
   })
 
   const spotifyPlaylists: Array<LoadedSpotifyPlaylist> = []
-  await setAccessToken()
   const allSpotifyPlaylists = await getMyPlaylists()
   for (const playlist of allSpotifyPlaylists) {
     const year = getYearFromPlaylistName(playlist.name)

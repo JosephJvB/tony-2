@@ -12,7 +12,7 @@ import {
   createList,
   createMissingTrack,
   createParsedVideo,
-  createSpotifyPlaylist,
+  createLoadedSpotifyPlaylist,
   createSpotifyTrack,
   createYoutubeVideo,
 } from '../factories'
@@ -249,7 +249,7 @@ describe('lambda/index.handler', () => {
   })
 
   it('toParse x5, parsedVideos x5, missingTracks x5, spotifyPlaylists x2, nextTracks x10, found x10', async () => {
-    const spotifyPlaylists = createList(createSpotifyPlaylist, 2, 10)
+    const spotifyPlaylists = createList(createLoadedSpotifyPlaylist, 2, 10)
     const missingTracks = createList(createMissingTrack, 5)
     const parsedVideos = createList(createParsedVideo, 5)
     const toParse = createList(createYoutubeVideo, 5)
