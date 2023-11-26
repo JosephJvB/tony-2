@@ -88,6 +88,7 @@ let ACCESS_TOKEN = ''
 let CLIENT_ID: string | undefined
 let SECRET: string | undefined
 let REFRESH_TOKEN: string | undefined
+let BASIC_AUTH: string | undefined
 
 export const getCredentials = async () => {
   if (!CLIENT_ID) {
@@ -99,8 +100,12 @@ export const getCredentials = async () => {
   if (!REFRESH_TOKEN) {
     REFRESH_TOKEN = await getSsmParameter(process.env.SPOTIFY_REFRESH_TOKEN_SSM)
   }
+  if (!BASIC_AUTH) {
+    BASIC_AUTH = Buffer.from(`${CLIENT_ID}:${SECRET}`).toString('base64')
+  }
 
   return {
+    BASIC_AUTH,
     CLIENT_ID,
     SECRET,
     REFRESH_TOKEN,
@@ -167,10 +172,10 @@ export const requestAccessToken = async () => {
       url: `${ACCOUNTS_BASE_URL}/token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${credentials.BASIC_AUTH}`,
       },
       data: new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: credentials.CLIENT_ID,
         refresh_token: credentials.REFRESH_TOKEN,
       }),
     })
