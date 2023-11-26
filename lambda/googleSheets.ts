@@ -13,7 +13,7 @@ export const test__setSheetId = (id: string) => {
 }
 export const SHEETS = {
   MISSING_TRACKS: {
-    NAME: 'MELON',
+    NAME: 'Missing Tracks',
     ID: 1814426117,
     RANGES: {
       ALL_ROWS: 'A2:F',
@@ -21,9 +21,9 @@ export const SHEETS = {
   },
   PARSED_VIDEOS: {
     ID: 123, // not so relevant. only need the link to the missing tracks shet
-    NAME: 'parsed videos',
+    NAME: 'Youtube Videos',
     RANGES: {
-      ALL_ROWS: 'A2:C',
+      ALL_ROWS: 'A2:D',
     },
   },
 } as const
