@@ -34,24 +34,33 @@ export default function (
         artist: t.artist,
         link: t.link,
         date: t.videoPublishedDate,
-        spotify_id: t.spotifyId ?? '',
+        spotify_ids: '',
       })
     }
   })
 
   missingTracks.forEach((t) => {
-    const f = t.spotify_id && maps.spotifyIdMap.get(t.spotify_id)
-    if (!f) {
-      return
-    }
+    const ids = (t.spotify_ids ?? '').split(',').map((i) => i.trim())
 
-    if (f) {
-      found.push({
-        ...f,
-        year: new Date(t.date).getUTCFullYear(),
+    const stillMissing: string[] = []
+    ids.forEach((spotifyId) => {
+      const f = maps.spotifyIdMap.get(spotifyId)
+
+      if (f) {
+        found.push({
+          ...f,
+          year: new Date(t.date).getUTCFullYear(),
+        })
+      } else {
+        stillMissing.push(spotifyId)
+      }
+    })
+
+    if (stillMissing.length) {
+      missing.push({
+        ...t,
+        spotify_ids: stillMissing.join(','),
       })
-    } else {
-      missing.push(t)
     }
   })
 

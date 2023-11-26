@@ -6,10 +6,13 @@ export default async function (
   fromVideoDescriptions: BestTrack[],
   missingTracks: MissingTrack[]
 ) {
-  const withSpotifyId = missingTracks.filter((t) => !!t.spotify_id)
+  const sheetSpotifyIds = missingTracks
+    .filter((t) => !!t.spotify_ids)
+    .flatMap((t) => t.spotify_ids.split(',').map((i) => i.trim()))
+
   console.log(
     '  >',
-    withSpotifyId.length,
+    sheetSpotifyIds.length,
     'manually added spotify ids from spreadsheet'
   )
 
@@ -17,7 +20,7 @@ export default async function (
     ...fromVideoDescriptions
       .filter((v) => v.spotifyId)
       .map((v) => v.spotifyId as string),
-    ...withSpotifyId.map((t) => t.spotify_id),
+    ...sheetSpotifyIds,
   ]
   console.log('  >', idsToGet.length, 'ids to batch lookup in spotify')
 

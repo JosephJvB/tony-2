@@ -36,7 +36,7 @@ export type MissingTrack = {
   artist: string
   date: string
   link: string
-  spotify_id: string
+  spotify_ids: string
 }
 export const rowToTrack = (row: string[]): MissingTrack => ({
   id: row[0],
@@ -44,7 +44,7 @@ export const rowToTrack = (row: string[]): MissingTrack => ({
   artist: row[2],
   date: row[3],
   link: row[4],
-  spotify_id: row[5] ?? '',
+  spotify_ids: row[5] ?? '',
 })
 export const trackToRow = (track: MissingTrack): string[] => [
   track.id,
@@ -52,7 +52,7 @@ export const trackToRow = (track: MissingTrack): string[] => [
   track.artist,
   track.date,
   track.link,
-  track.spotify_id,
+  track.spotify_ids,
 ]
 export type ParsedVideo = {
   id: string
