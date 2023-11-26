@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import { getSsmParameter } from './ssm'
 
 export const YOUTUBE_PLAYIST_ID = 'PLP4CSgl7K7or84AAhr7zlLNpghEnKWu2c'
 
@@ -32,8 +33,19 @@ export type YoutubePlaylistItemQuery = ApiQuery & {
   pageToken?: string
 }
 
+let API_KEY: string | undefined
+
+export const getApiKey = async () => {
+  if (!API_KEY) {
+    API_KEY = await getSsmParameter(process.env.YOUTUBE_API_KEY_SSM)
+  }
+  return API_KEY
+}
+
 export const getYoutubePlaylistItems = async () => {
   try {
+    const apiKey = await getApiKey()
+
     const allItems: YoutubeVideo[] = []
     let pageToken: string | undefined
 
@@ -43,7 +55,7 @@ export const getYoutubePlaylistItems = async () => {
       }
 
       const params: YoutubePlaylistItemQuery = {
-        key: process.env.YOUTUBE_API_KEY,
+        key: apiKey,
         playlistId: YOUTUBE_PLAYIST_ID,
         part: 'snippet,status',
         maxResults: 50,

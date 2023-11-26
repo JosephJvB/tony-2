@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { BestTrack, BestTrackProps } from './tasks/extractTracks'
 import { MISSING_TRACKS_LINK } from './googleSheets'
+import { getSsmParameter } from './ssm'
 
 export const SPOTIFY_JVB_USERID = 'xnmacgqaaa6a1xi7uy2k1fe7w'
 export const SPOTIFY_ID_LENGTH = 22
@@ -84,6 +85,28 @@ export type SubmitCodeResponse = {
 let BASIC_TOKEN = ''
 let ACCESS_TOKEN = ''
 
+let CLIENT_ID: string | undefined
+let SECRET: string | undefined
+let REFRESH_TOKEN: string | undefined
+
+export const getCredentials = async () => {
+  if (!CLIENT_ID) {
+    CLIENT_ID = await getSsmParameter(process.env.SPOTIFY_CLIENT_ID_SSM)
+  }
+  if (!SECRET) {
+    SECRET = await getSsmParameter(process.env.SPOTIFY_SECRET_SSM)
+  }
+  if (!REFRESH_TOKEN) {
+    REFRESH_TOKEN = await getSsmParameter(process.env.SPOTIFY_REFRESH_TOKEN_SSM)
+  }
+
+  return {
+    CLIENT_ID,
+    SECRET,
+    REFRESH_TOKEN,
+  }
+}
+
 export const setBasicToken = async () => {
   if (!BASIC_TOKEN) {
     const res = await requestBasicToken()
@@ -93,6 +116,7 @@ export const setBasicToken = async () => {
 
 export const requestBasicToken = async () => {
   try {
+    const credentials = await getCredentials()
     const res: AxiosResponse<{
       access_token: string
     }> = await axios({
@@ -103,8 +127,8 @@ export const requestBasicToken = async () => {
       },
       data: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: process.env.SPOTIFY_CLIENT_ID,
-        client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+        client_id: credentials.CLIENT_ID,
+        client_secret: credentials.SECRET,
       }),
     })
 
@@ -134,6 +158,8 @@ export const setAccessToken = async () => {
 
 export const requestAccessToken = async () => {
   try {
+    const credentials = await getCredentials()
+
     const res: AxiosResponse<{
       access_token: string
     }> = await axios({
@@ -144,8 +170,8 @@ export const requestAccessToken = async () => {
       },
       data: new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: process.env.SPOTIFY_CLIENT_ID,
-        refresh_token: process.env.SPOTIFY_REFRESH_TOKEN,
+        client_id: credentials.CLIENT_ID,
+        refresh_token: credentials.REFRESH_TOKEN,
       }),
     })
 

@@ -7,7 +7,7 @@ export class Tony2Stack extends cdk.Stack {
 
     const backupsBucket = new cdk.aws_s3.Bucket(this, 'backups', {
       versioned: false,
-      bucketName: 'tony2-backups',
+      bucketName: `${id}-backups`,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
       lifecycleRules: [
         {
@@ -28,6 +28,40 @@ export class Tony2Stack extends cdk.Stack {
       }),
     })
 
+    const googlePrivateKey =
+      cdk.aws_ssm.StringParameter.fromStringParameterName(
+        this,
+        'GooglePrivateKeyParam',
+        `/${id}/google/private-key`
+      )
+    const googleClientEmail =
+      cdk.aws_ssm.StringParameter.fromStringParameterName(
+        this,
+        'GoogleClientEmailParam',
+        `/${id}/google/client-email`
+      )
+    const youtubeApiKey = cdk.aws_ssm.StringParameter.fromStringParameterName(
+      this,
+      'YoutubeApiKeyParam',
+      `/${id}/youtube/api-key`
+    )
+    const spotifyClientId = cdk.aws_ssm.StringParameter.fromStringParameterName(
+      this,
+      'SpotifyClientIdParam',
+      `/${id}/spotify/client-id`
+    )
+    const spotifySecret = cdk.aws_ssm.StringParameter.fromStringParameterName(
+      this,
+      'SpotifySecretParam',
+      `/${id}/spotify/secret`
+    )
+    const spotifyRefreshToken =
+      cdk.aws_ssm.StringParameter.fromStringParameterName(
+        this,
+        'SpotifyRefreshTokenParam',
+        `/${id}/spotify/refresh-token`
+      )
+
     // lets try do this all all in one lambda I guess
     // can split it later
     // get youtube playlist items
@@ -43,10 +77,23 @@ export class Tony2Stack extends cdk.Stack {
       handler: 'index.handler',
       events: [],
       environment: {
+        GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
+        GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
         S3_BUCKET: backupsBucket.bucketName,
+        SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
+        SPOTIFY_SECRET_SSM: spotifySecret.parameterName,
+        SPOTIFY_SPOTIFY_REFRESH_TOKEN_SSM_SSM:
+          spotifyRefreshToken.parameterName,
+        YOUTUBE_API_KEY_SSM: youtubeApiKey.parameterName,
       },
     })
 
+    googleClientEmail.grantRead(daKingOfDaHighway)
+    googlePrivateKey.grantRead(daKingOfDaHighway)
+    spotifyClientId.grantRead(daKingOfDaHighway)
+    spotifySecret.grantRead(daKingOfDaHighway)
+    spotifyRefreshToken.grantRead(daKingOfDaHighway)
+    youtubeApiKey.grantRead(daKingOfDaHighway)
     backupsBucket.grantWrite(daKingOfDaHighway)
     cronEvent.addTarget(
       new cdk.aws_events_targets.LambdaFunction(daKingOfDaHighway)

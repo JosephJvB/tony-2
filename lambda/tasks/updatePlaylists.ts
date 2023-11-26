@@ -7,7 +7,7 @@ import {
   updatePlaylistDescription,
 } from '../spotify'
 import { LoadedSpotifyPlaylist } from './getData'
-import { FoundTrack } from './getDiff'
+import { FoundTrack } from './getTrackDiff'
 
 export default async function (
   nextTracks: FoundTrack[],

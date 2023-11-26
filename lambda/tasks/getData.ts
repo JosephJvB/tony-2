@@ -86,7 +86,7 @@ export default async function () {
   const toParse = youtubeVideos.filter((v) => !beenParsed.has(v.id))
 
   return {
-    allVideos: youtubeVideos,
+    parsedVideos,
     toParse,
     missingTracks,
     spotifyPlaylists,

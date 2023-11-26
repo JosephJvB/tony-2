@@ -1,4 +1,5 @@
 import { google, sheets_v4 } from 'googleapis'
+import { getSsmParameter } from './ssm'
 
 export const BASE_SHEET_URL = 'https://docs.google.com/spreadsheets/d'
 export const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -57,29 +58,47 @@ export type ParsedVideo = {
   id: string
   title: string
   published_at: string
+  total_tracks: string
 }
 export const rowToVideo = (row: string[]): ParsedVideo => ({
   id: row[0],
   title: row[1],
   published_at: row[2],
+  total_tracks: row[3],
 })
 export const videoToRow = (video: ParsedVideo): string[] => [
   video.id,
   video.title,
   video.published_at,
+  video.total_tracks,
 ]
 
-let _client: sheets_v4.Sheets | undefined
+let PRIVATE_KEY: string | undefined
+let CLIENT_EMAIL: string | undefined
+export const getCredentials = async () => {
+  if (!PRIVATE_KEY) {
+    PRIVATE_KEY = await getSsmParameter(process.env.GOOGLE_PRIVATE_KEY_SSM)
+  }
+  if (!CLIENT_EMAIL) {
+    CLIENT_EMAIL = await getSsmParameter(process.env.GOOGLE_CLIENT_EMAIL_SSM)
+  }
+  return {
+    PRIVATE_KEY,
+    CLIENT_EMAIL,
+  }
+}
 
-export const getClient = () => {
+let _client: sheets_v4.Sheets | undefined
+export const getClient = async () => {
   if (!_client) {
     // https://stackoverflow.com/questions/30400341/environment-variables-containing-newlines-in-node
-    const privateKey = process.env.GOOGLE_SA_PRIVATE_KEY.replace(/\\n/g, '\n')
+    // const privateKey = process.env.GOOGLE_SA_PRIVATE_KEY?.replace(/\\n/g, '\n')
+    const credentials = await getCredentials()
     const authClient = new google.auth.GoogleAuth({
       scopes: SCOPES,
       credentials: {
-        private_key: privateKey,
-        client_email: process.env.GOOGLE_SA_CLIENT_EMAIL,
+        private_key: credentials.PRIVATE_KEY,
+        client_email: credentials.CLIENT_EMAIL,
       },
     })
     _client = google.sheets({
@@ -91,7 +110,8 @@ export const getClient = () => {
 }
 
 export const getRows = async (sheetName: string, range: string) => {
-  const res = await getClient().spreadsheets.values.get({
+  const client = await getClient()
+  const res = await client.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
     range: `${sheetName}!${range}`,
   })
@@ -104,7 +124,8 @@ export const addRows = async (
   range: string,
   rows: string[][]
 ) => {
-  await getClient().spreadsheets.values.append({
+  const client = await getClient()
+  await client.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
     range: `${sheetName}!${range}`,
     valueInputOption: 'RAW',
@@ -122,7 +143,8 @@ export const upsertRows = async (
   range: string,
   rows: string[][]
 ) => {
-  await getClient().spreadsheets.values.update({
+  const client = await getClient()
+  await client.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
     range: `${sheetName}!${range}`,
     valueInputOption: 'RAW',
@@ -135,7 +157,8 @@ export const upsertRows = async (
 }
 
 export const clearRows = async (sheetName: string, range: string) => {
-  await getClient().spreadsheets.values.clear({
+  const client = await getClient()
+  await client.spreadsheets.values.clear({
     spreadsheetId: SPREADSHEET_ID,
     range: `${sheetName}!${range}`,
   })

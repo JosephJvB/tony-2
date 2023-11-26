@@ -1,5 +1,6 @@
 import {
   MissingTrack,
+  ParsedVideo,
   SHEETS,
   clearRows,
   trackToRow,
@@ -9,16 +10,10 @@ import {
 import { YoutubeVideo } from '../youtube'
 
 export default async function (
-  parsedVideos: YoutubeVideo[],
+  nextParsedVideos: ParsedVideo[],
   nextMissingTracks: MissingTrack[]
 ) {
-  const nextParsedVideos = parsedVideos.map((v) => ({
-    id: v.id,
-    title: v.snippet.title,
-    published_at: v.snippet.publishedAt,
-  }))
   console.log('  > nextParsedVideos x', nextParsedVideos.length)
-
   nextParsedVideos.sort(
     (a, z) =>
       new Date(z.published_at).getTime() - new Date(a.published_at).getTime()
@@ -35,7 +30,6 @@ export default async function (
   )
 
   console.log('  > nextMissingTracks x', nextMissingTracks.length)
-
   nextMissingTracks.sort(
     (a, z) => new Date(z.date).getTime() - new Date(a.date).getTime()
   )

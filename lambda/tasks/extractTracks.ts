@@ -1,3 +1,4 @@
+import { ParsedVideo } from '../googleSheets'
 import { extractSpotifyId } from '../spotify'
 import { YoutubeVideo } from '../youtube'
 
@@ -34,26 +35,37 @@ export const RAW_REVIEW_TITLES = [
   'ALBUM',
   'TRACK',
   'COMPILATION',
-]
-export const FAV_TRACKS_ONLY = 'FAV TRACKS:'
-export const FAV_AND_WORST = 'FAV & WORST TRACKS:'
+].map((t) => `${t} REVIEW`)
 
 export default function (toExtract: YoutubeVideo[]) {
-  return toExtract
+  const nextVideoRows: ParsedVideo[] = []
+  const nextTracks: BestTrack[] = []
+
+  toExtract
     .filter((v) => isBestTrackVideo(v))
-    .flatMap((v) => {
+    .forEach((v) => {
       const bestTracks = extractTrackList(v)
 
       const year = new Date(v.snippet.publishedAt).getFullYear()
 
-      return bestTracks.map((t) => ({
+      const tracks = bestTracks.map((t) => ({
         id: [t.artist, t.name, year].join('__'),
         ...t,
         year,
         videoPublishedDate: v.snippet.publishedAt,
         spotifyId: extractSpotifyId(t.link, 'track'),
       }))
+
+      nextTracks.push(...tracks)
+      nextVideoRows.push({
+        id: v.id,
+        title: v.snippet.title,
+        published_at: v.snippet.publishedAt,
+        total_tracks: tracks.length.toString(),
+      })
     })
+
+  return { nextVideoRows, nextTracks }
 }
 
 export const extractTrackList = (v: YoutubeVideo) => {
@@ -65,12 +77,6 @@ export const extractTrackList = (v: YoutubeVideo) => {
   let endIdx = lines.findIndex(
     (l) => !!MEH_TRACK_HEADERS_UPPER.has(l.toUpperCase())
   )
-
-  // fix end and start
-  if (v.snippet.title.startsWith(FAV_TRACKS_ONLY)) {
-  }
-  if (v.snippet.title.startsWith(FAV_AND_WORST)) {
-  }
 
   if (startIdx === -1 || endIdx === -1) {
     console.error('failed to find bestTrackSection', {
@@ -136,7 +142,7 @@ export const isBestTrackVideo = (v: YoutubeVideo) => {
   // playlist is "Weekly Track Roundup / Raw Reviews"
   // skip raw reviews
   const reviewTitle = RAW_REVIEW_TITLES.find((rt) =>
-    v.snippet.title.includes(`${rt} REVIEW`)
+    v.snippet.title.includes(rt)
   )
   if (!!reviewTitle) {
     return false
