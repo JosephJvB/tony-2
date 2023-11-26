@@ -15,20 +15,7 @@ export type BestTrack = BestTrackProps & {
   spotifyId: string | null
 }
 
-export const BEST_TRACK_PREFIXES = [
-  '!!!BEST TRACK',
-  '!!BEST TRACK',
-  '!!!BEST SONG',
-  '!!!FAV TRACK',
-]
-export const MEH_TRACK_HEADERS_UPPER = new Set([
-  '...MEH...',
-  'MEH...',
-  '...MEH',
-  '…MEH…',
-  'MEH…',
-  '…MEH',
-])
+export const BEST_TRACK_PREFIXES = ['!!!BEST', '!!BEST', '!BEST']
 export const RAW_REVIEW_TITLES = [
   'MIXTAPE',
   'EP',
@@ -44,17 +31,25 @@ export default function (toExtract: YoutubeVideo[]) {
   toExtract
     .filter((v) => isBestTrackVideo(v))
     .forEach((v) => {
-      const bestTracks = extractTrackList(v)
+      const bestTrackSection = getBestTracksSection(v)
+      if (!bestTrackSection.length) {
+        console.error('failed to find bestTrackSection', {
+          id: v.id,
+          title: v.snippet.title,
+        })
+      }
 
       const year = new Date(v.snippet.publishedAt).getFullYear()
 
-      const tracks = bestTracks.map((t) => ({
-        id: [t.artist, t.name, year].join('__'),
-        ...t,
-        year,
-        videoPublishedDate: v.snippet.publishedAt,
-        spotifyId: extractSpotifyId(t.link, 'track'),
-      }))
+      const tracks = bestTrackSection
+        .map((l) => getYoutubeTrackProps(l))
+        .map((t) => ({
+          id: [t.artist, t.name, year].join('__'),
+          ...t,
+          year,
+          videoPublishedDate: v.snippet.publishedAt,
+          spotifyId: extractSpotifyId(t.link, 'track'),
+        }))
 
       nextTracks.push(...tracks)
       nextVideoRows.push({
@@ -68,44 +63,19 @@ export default function (toExtract: YoutubeVideo[]) {
   return { nextVideoRows, nextTracks }
 }
 
-export const extractTrackList = (v: YoutubeVideo) => {
-  const lines = descriptionToLines(v.snippet.description)
+export const getBestTracksSection = (v: YoutubeVideo) => {
+  const sections = v.snippet.description
+    .replace(/–/g, '-')
+    .replace(/\r/g, '')
+    .replace(/\n \n/g, '\n\n')
+    .split('\n\n\n')
+    .map((s) => s.split('\n\n').map((l) => l.trim()))
 
-  let startIdx = lines.findIndex(
-    (l) => !!BEST_TRACK_PREFIXES.find((pref) => l.startsWith(pref))
+  const bestTrackSection = sections.find(
+    (s) => !!BEST_TRACK_PREFIXES.find((pref) => s[0].startsWith(pref))
   )
-  let endIdx = lines.findIndex(
-    (l) => !!MEH_TRACK_HEADERS_UPPER.has(l.toUpperCase())
-  )
 
-  if (startIdx === -1 || endIdx === -1) {
-    console.error('failed to find bestTrackSection', {
-      id: v.id,
-      title: v.snippet.title,
-      startIdx,
-      endIdx,
-    })
-    return []
-  }
-
-  const trackList: BestTrackProps[] = []
-  lines.slice(startIdx + 1, endIdx).forEach((l) => {
-    const track = getYoutubeTrackProps(l)
-    if (track) {
-      trackList.push(track)
-    } else {
-      // failed to extract track from line:
-    }
-  })
-
-  if (trackList.length === 0) {
-    console.error('found no tracks for video', {
-      id: v.id,
-      title: v.snippet.title,
-    })
-  }
-
-  return trackList
+  return bestTrackSection?.slice(1) ?? []
 }
 
 export const getYoutubeTrackProps = (line: string) => {
@@ -120,16 +90,6 @@ export const getYoutubeTrackProps = (line: string) => {
     artist: artist ?? '',
     link: link ?? '',
   }
-}
-// i can get SECTIONS by splittin on \n\n\n
-// then find the BEST_TRACK_SECTION
-// then try parse those lines only
-export const descriptionToLines = (description: string) => {
-  return description
-    .replace(/–/g, '-')
-    .replace(/\n \n/g, '\n\n')
-    .split('\n\n')
-    .map((l) => l.trim())
 }
 
 export const isBestTrackVideo = (v: YoutubeVideo) => {
