@@ -26,10 +26,12 @@ export default async function (
 
   // exclude missingTracks
   // already failed to be found by search on previous run
-  const toFind = fromVideoDescriptions.filter(
-    (t) =>
-      t.name && t.artist && (!t.spotifyId || !spotifyIdMap.has(t.spotifyId))
-  )
+  // only search for tracks with at least
+  const toFind = fromVideoDescriptions.filter((t) => {
+    const hasValidSearchProps = t.name && t.artist
+    const alreadyFound = t.spotifyId && spotifyIdMap.has(t.spotifyId)
+    return hasValidSearchProps && !alreadyFound
+  })
   console.log('  >', toFind.length, 'tracks to find in spotify')
 
   const customIdMap = await findTracks(toFind)
