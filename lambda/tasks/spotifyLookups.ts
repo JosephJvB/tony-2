@@ -2,6 +2,10 @@ import { MissingTrack } from '../googleSheets'
 import { SpotifyTrack, findTrack, getTracks } from '../spotify'
 import { BestTrack } from './extractTracks'
 
+export type HasSpotifyId = BestTrack & {
+  spotifyId: string
+}
+
 export default async function (
   fromVideoDescriptions: BestTrack[],
   missingTracks: MissingTrack[]
@@ -18,7 +22,7 @@ export default async function (
 
   const idsToGet: string[] = [
     ...fromVideoDescriptions
-      .filter((v) => v.spotifyId)
+      .filter((v): v is HasSpotifyId => !!v.spotifyId)
       .map((v) => v.spotifyId as string),
     ...sheetSpotifyIds,
   ]

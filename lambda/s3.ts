@@ -1,8 +1,8 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
-export const putFile = async (filePath: string, contents: string) => {
-  const client = new S3Client()
+const client = new S3Client()
 
+export const putFile = async (filePath: string, contents: string) => {
   const putFileCmd = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: filePath,

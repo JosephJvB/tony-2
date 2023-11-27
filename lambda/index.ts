@@ -16,7 +16,7 @@ export const handler = async () => {
     await setAccessToken()
 
     /**
-     * get data:
+     * 2. get data:
      * - Spreadsheet: already parsed youtube videos
      * - Spreadsheet: missing tracks
      * - YoutubeAPI: playlist items
