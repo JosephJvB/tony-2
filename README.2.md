@@ -1,5 +1,7 @@
 # spreadsheet integration
 
+make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
+
 1. Make forbidden tracks public:
   - save forbidden tracks to spreadsheet. that's all.
   - done

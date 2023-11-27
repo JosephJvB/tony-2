@@ -28,39 +28,45 @@ export default function (toExtract: YoutubeVideo[]) {
   const nextVideoRows: ParsedVideo[] = []
   const nextTracks: BestTrack[] = []
 
-  toExtract
-    .filter((v) => isBestTrackVideo(v))
-    .forEach((v) => {
-      const bestTrackSection = getBestTracksSection(v)
-      if (!bestTrackSection.length) {
-        console.error('failed to find bestTrackSection', {
-          id: v.id,
-          title: v.snippet.title,
-        })
-      }
+  toExtract.forEach((v) => {
+    const tracks = getTracksForVideo(v)
 
-      const year = new Date(v.snippet.publishedAt).getFullYear()
-
-      const tracks = bestTrackSection
-        .map((l) => getYoutubeTrackProps(l))
-        .map((t) => ({
-          id: [t.artist, t.name, year].join('__'),
-          ...t,
-          year,
-          videoPublishedDate: v.snippet.publishedAt,
-          spotifyId: extractSpotifyId(t.link, 'track'),
-        }))
-
-      nextTracks.push(...tracks)
-      nextVideoRows.push({
-        id: v.id,
-        title: v.snippet.title,
-        published_at: v.snippet.publishedAt,
-        total_tracks: tracks.length.toString(),
-      })
+    nextVideoRows.push({
+      id: v.id,
+      title: v.snippet.title,
+      published_at: v.snippet.publishedAt,
+      total_tracks: tracks.length.toString(),
     })
+    nextTracks.push(...tracks)
+  })
 
   return { nextVideoRows, nextTracks }
+}
+
+export const getTracksForVideo = (v: YoutubeVideo) => {
+  if (!isBestTrackVideo(v)) {
+    return []
+  }
+
+  const bestTrackSection = getBestTracksSection(v)
+  if (!bestTrackSection.length) {
+    console.error('failed to find bestTrackSection', {
+      id: v.id,
+      title: v.snippet.title,
+    })
+  }
+
+  const year = new Date(v.snippet.publishedAt).getFullYear()
+
+  return bestTrackSection
+    .map((l) => getYoutubeTrackProps(l))
+    .map((t) => ({
+      id: [t.artist, t.name, year].join('__'),
+      ...t,
+      year,
+      videoPublishedDate: v.snippet.publishedAt,
+      spotifyId: extractSpotifyId(t.link, 'track'),
+    }))
 }
 
 export const getBestTracksSection = (v: YoutubeVideo) => {
