@@ -37,16 +37,23 @@ export const createParsedVideo = (i: number): ParsedVideo => ({
   total_tracks: `total_tracks_${i}`,
 })
 
-export const createMissingTrack = (i: number): MissingTrack => ({
+export const createMissingTrack = (
+  i: number,
+  t: Partial<MissingTrack> = {}
+): MissingTrack => ({
   id: `id_${i}`,
   name: `name_${i}`,
   artist: `artist_${i}`,
   date: `date_${i}`,
   link: `link_${i}`,
   spotify_ids: `spotify_ids_${i}`,
+  ...t,
 })
 
-export const createBestTrack = (i: number): BestTrack => ({
+export const createBestTrack = (
+  i: number,
+  t: Partial<BestTrack> = {}
+): BestTrack => ({
   id: `id_${i}`,
   name: `name_${i}`,
   artist: `artist_${i}`,
@@ -54,6 +61,7 @@ export const createBestTrack = (i: number): BestTrack => ({
   year: i,
   videoPublishedDate: `videoPublishedDate_${i}`,
   spotifyId: `spotifyId_${i}`,
+  ...t,
 })
 
 export const createSpotifyTrack = (i: number): SpotifyTrack => ({
