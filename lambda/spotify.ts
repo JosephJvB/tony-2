@@ -382,9 +382,11 @@ export const getPlaylistItems = async (playlistId: string) => {
 
 export const addPlaylistItems = async (
   playlistId: string,
-  trackUris: string[]
+  trackIds: string[]
 ) => {
   try {
+    const trackUris = trackIds.map((id) => idToUri(id, 'track'))
+
     for (let i = 0; i < trackUris.length; i += 100) {
       const uris = trackUris.slice(i, i + 100)
 
@@ -441,6 +443,14 @@ export const updatePlaylistDescription = async (
     console.error(e)
     throw e
   }
+}
+
+export const idToUri = (id: string, type: 'track') => {
+  if (id.length !== SPOTIFY_ID_LENGTH) {
+    throw new Error(`invalid spotify id ${JSON.stringify({ id })}`)
+  }
+
+  return `spotify:${type}:${id}`
 }
 
 // https://open.spotify.com/track/1nxudYVyc5RLm8LrSMzeTa?si=-G3WGzRgTDq8OuRa688FMg

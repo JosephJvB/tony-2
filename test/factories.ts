@@ -1,10 +1,12 @@
 import { MissingTrack, ParsedVideo } from '../lambda/googleSheets'
 import {
+  PLAYLIST_DESCRIPTION,
   PLAYLIST_NAME_PREFIX,
   SpotifyPlaylist,
   SpotifyTrack,
 } from '../lambda/spotify'
 import { BestTrack } from '../lambda/tasks/extractTracks'
+import { FoundTrack } from '../lambda/tasks/getTrackDiff'
 import { YoutubeVideo } from '../lambda/youtube'
 
 export const createList = <T>(
@@ -64,6 +66,23 @@ export const createBestTrack = (
   ...t,
 })
 
+export const createFoundTrack = (i: number, t: Partial<FoundTrack> = {}) => ({
+  id: `id_${i}`,
+  name: `name_${i}`,
+  uri: `uri_${i}`,
+  href: `href_${i}`,
+  artists: [
+    {
+      id: `artist.id_${i}`,
+      name: `artist.name_${i}`,
+      uri: `artist.uri_${i}`,
+      href: `artist.href_${i}`,
+    },
+  ],
+  year: i,
+  ...t,
+})
+
 export const createSpotifyTrack = (i: number): SpotifyTrack => ({
   id: `id_${i}`,
   name: `name_${i}`,
@@ -92,7 +111,7 @@ export const createSpotifyPlaylist = (
 ): SpotifyPlaylist => ({
   id: `id_${i}`,
   name: `${PLAYLIST_NAME_PREFIX}${i}`,
-  description: `description_${i}`,
+  description: PLAYLIST_DESCRIPTION,
   public: true,
   collaborative: false,
   tracks: {
@@ -113,6 +132,6 @@ export const createLoadedSpotifyPlaylist = (
 ): LoadedSpotifyPlaylist => ({
   id: `id_${i}`,
   name: `${PLAYLIST_NAME_PREFIX}${i}`,
-  description: `description_${i}`,
+  description: PLAYLIST_DESCRIPTION,
   trackIds: createList((tId: number) => `trackId[${tId}]`, numTracks),
 })
