@@ -10,17 +10,18 @@ import updateSpreadsheets from './tasks/updateSpreadsheets'
 export const handler = async () => {
   try {
     // 1. load credentials
+    //    ssm
     await loadSsmParams()
-    // spotify
+    //    spotify
     await setBasicToken()
     await setAccessToken()
 
     /**
-     * 2. get data:
-     * - Spreadsheet: already parsed youtube videos
-     * - Spreadsheet: missing tracks
-     * - YoutubeAPI: playlist items
-     * - SpotifyAPI: playlist items
+     * 2. get data & save backups to s3
+     *    Spreadsheet: already parsed youtube videos
+     *    Spreadsheet: missing tracks
+     *    YoutubeAPI: playlist items
+     *    SpotifyAPI: playlists & items
      */
     const data = await getData()
 
