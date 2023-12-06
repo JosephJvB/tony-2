@@ -8,7 +8,7 @@ export class Tony2Stack extends cdk.Stack {
 
     const backupsBucket = new cdk.aws_s3.Bucket(this, 'backups', {
       versioned: false,
-      bucketName: `${id}-backups`,
+      bucketName: `${id.toLowerCase()}-backups`,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
       lifecycleRules: [
         {
