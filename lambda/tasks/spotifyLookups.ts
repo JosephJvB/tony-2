@@ -23,7 +23,7 @@ export default async function (
   const idsToGet: string[] = [
     ...fromVideoDescriptions
       .filter((v): v is HasSpotifyId => !!v.spotifyId)
-      .map((v) => v.spotifyId as string),
+      .map((v) => v.spotifyId),
     ...sheetSpotifyIds,
   ]
   console.log('  >', idsToGet.length, 'ids to batch lookup in spotify')

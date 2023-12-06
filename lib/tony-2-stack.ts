@@ -77,7 +77,7 @@ export class Tony2Stack extends cdk.Stack {
       this,
       'kodh',
       {
-        memorySize: 128,
+        memorySize: 256,
         timeout: cdk.Duration.seconds(30),
         runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
         entry: join(__dirname, '../lambda/lambda.ts'),

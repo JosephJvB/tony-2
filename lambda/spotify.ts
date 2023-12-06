@@ -213,7 +213,7 @@ export const findTrack = async (
     const params: SpotifySearchParams = {
       q: `track:${name} artist:${artist}`,
       type: 'track',
-      limit: 3,
+      limit: 1,
     }
 
     if (year) {

@@ -1,5 +1,7 @@
 # spreadsheet integration
 
+i guess if this is etl, I shouldn't call it extract tracks? idk man
+
 make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
 
 1. Make forbidden tracks public:
