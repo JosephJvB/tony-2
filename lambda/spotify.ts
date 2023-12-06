@@ -149,7 +149,7 @@ export const requestAccessToken = async () => {
       },
       data: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: SSM_PARAMS.SPOTIFY_SPOTIFY_REFRESH_TOKEN,
+        refresh_token: SSM_PARAMS.SPOTIFY_REFRESH_TOKEN,
       }),
     })
 
