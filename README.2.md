@@ -1,22 +1,12 @@
 # spreadsheet integration
 
-i guess if this is etl, I shouldn't call it extract tracks? idk man
+### todos:
+- split lambda into step function? Or nah
+- make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
+- i guess if this is etl, I shouldn't call it extract tracks? idk man
 
-make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
 
-1. Make forbidden tracks public:
-  - save forbidden tracks to spreadsheet. that's all.
-  - done
-
-2. Run on Cloud on regular Cron interval
-  - x2 input sources to lookup in Spotify
-    1. NEW youtube video descriptions
-      - do not parse old descriptions, track video IDs that have already been parsed
-    2. Missing spreadsheet rows with spotifyId
-      - look up spotifyId
-      - I guess, if it succeeds, I'll need to update that row somehow. So next run doesn't repeat the same
-
-### deployed lambda
+### it's called system design babes look it up x
 1. get all playlist videos
   - stretch: if possible, run on webhook when a video is added
   - Array<{id, name, artist, date, link}>
