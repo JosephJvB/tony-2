@@ -19,6 +19,8 @@ export default async function (
     trackMap.set(t.year, [...soFar, t])
   })
 
+  console.log('  >', trackMap.size, 'playlists to update')
+
   const playlistMap = new Map<number, LoadedSpotifyPlaylist>()
   spotifyPlaylists.forEach((p) => {
     const y = getYearFromPlaylistName(p.name)
@@ -33,6 +35,7 @@ export default async function (
     let playlistDescription = loadedPlaylist?.description
 
     if (!loadedPlaylist) {
+      console.log('  > creating playlist for year', year)
       const createdPaylist = await createPlaylist(year)
       playlistId = createdPaylist.id
       playlistDescription = createdPaylist.description
@@ -46,11 +49,14 @@ export default async function (
     }
 
     const existingTrackIds = new Set<string>(loadedPlaylist?.trackIds ?? [])
+    console.log('  > playlist', year, 'has', existingTrackIds.size, 'tracks')
     const toAdd = [
       ...new Set(
         tracks.filter((t) => !existingTrackIds.has(t.id)).map((t) => t.id)
       ),
     ]
+    console.log('  > adding', toAdd.length, 'tracks to playlist', year)
+
     if (toAdd.length) {
       await addPlaylistItems(playlistId, toAdd)
     }
