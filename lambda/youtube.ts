@@ -52,7 +52,7 @@ export const getYoutubePlaylistItems = async () => {
       }
       const res: AxiosResponse<ApiResponse<YoutubeVideo>> = await axios({
         method: 'get',
-        url: `${BASE_URL}/youtubeplaylistItems`,
+        url: `${BASE_URL}/playlistItems`,
         params,
       })
 
