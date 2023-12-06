@@ -7,7 +7,6 @@ import {
   upsertRows,
   videoToRow,
 } from '../googleSheets'
-import { YoutubeVideo } from '../youtube'
 
 export default async function (
   nextParsedVideos: ParsedVideo[],

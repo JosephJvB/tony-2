@@ -63,6 +63,16 @@ export class Tony2Stack extends cdk.Stack {
         `/${id}/spotify/refresh-token`
       )
 
+    const lambdaEnv: NodeJS.ProcessEnv = {
+      S3_BUCKET: backupsBucket.bucketName,
+      GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
+      GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
+      SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
+      SPOTIFY_SECRET_SSM: spotifySecret.parameterName,
+      SPOTIFY_REFRESH_TOKEN_SSM: spotifyRefreshToken.parameterName,
+      YOUTUBE_API_KEY_SSM: youtubeApiKey.parameterName,
+    }
+
     const daKingOfDaHighway = new cdk.aws_lambda_nodejs.NodejsFunction(
       this,
       'kodh',
@@ -70,17 +80,9 @@ export class Tony2Stack extends cdk.Stack {
         memorySize: 128,
         timeout: cdk.Duration.seconds(30),
         runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
-        entry: join(__dirname, '../lambda/index.ts'),
+        entry: join(__dirname, '../lambda/lambda.ts'),
         handler: 'handler',
-        environment: {
-          S3_BUCKET: backupsBucket.bucketName,
-          GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
-          GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
-          SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
-          SPOTIFY_SECRET_SSM: spotifySecret.parameterName,
-          SPOTIFY_SPOTIFY_REFRESH_TOKEN_SSM: spotifyRefreshToken.parameterName,
-          YOUTUBE_API_KEY_SSM: youtubeApiKey.parameterName,
-        },
+        environment: lambdaEnv as Record<string, string>,
       }
     )
 

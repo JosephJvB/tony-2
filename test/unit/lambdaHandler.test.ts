@@ -1,4 +1,4 @@
-import { handler } from '../../lambda'
+import { handler } from '../../lambda/lambda'
 import * as spotify from '../../lambda/spotify'
 import * as ssm from '../../lambda/ssm'
 import * as extractTracks from '../../lambda/tasks/extractTracks'
