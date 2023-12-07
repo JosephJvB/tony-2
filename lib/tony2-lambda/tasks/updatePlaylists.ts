@@ -5,7 +5,7 @@ import {
   createPlaylist,
   getYearFromPlaylistName,
   updatePlaylistDescription,
-} from '../spotify'
+} from '../../spotify'
 import { LoadedSpotifyPlaylist } from './getData'
 import { FoundTrack } from './getTrackDiff'
 

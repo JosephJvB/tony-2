@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { BestTrack, BestTrackProps } from './tasks/extractTracks'
+import { BestTrack, BestTrackProps } from './tony2-lambda/tasks/extractTracks'
 import { MISSING_TRACKS_LINK } from './googleSheets'
 import { SSM_PARAMS } from './ssm'
 

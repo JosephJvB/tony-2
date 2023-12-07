@@ -1,5 +1,5 @@
-import { SpotifyTrack } from '../../lambda/spotify'
-import * as getTrackDiff from '../../lambda/tasks/getTrackDiff'
+import { SpotifyTrack } from '../../lib/spotify'
+import * as getTrackDiff from '../../lib/tony2-lambda/tasks/getTrackDiff'
 import {
   createBestTrack,
   createList,

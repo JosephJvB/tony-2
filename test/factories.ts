@@ -1,13 +1,13 @@
-import { MissingTrack, ParsedVideo } from '../lambda/googleSheets'
+import { MissingTrack, ParsedVideo } from '../lib/googleSheets'
 import {
   PLAYLIST_DESCRIPTION,
   PLAYLIST_NAME_PREFIX,
   SpotifyPlaylist,
   SpotifyTrack,
-} from '../lambda/spotify'
-import { BestTrack } from '../lambda/tasks/extractTracks'
-import { FoundTrack } from '../lambda/tasks/getTrackDiff'
-import { YoutubeVideo } from '../lambda/youtube'
+} from '../lib/spotify'
+import { BestTrack } from '../lib/tony2-lambda/tasks/extractTracks'
+import { FoundTrack } from '../lib/tony2-lambda/tasks/getTrackDiff'
+import { YoutubeVideo } from '../lib/youtube'
 
 export const createList = <T>(
   helper: (i: number, ...args: any[]) => T,

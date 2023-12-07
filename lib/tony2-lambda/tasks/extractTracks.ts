@@ -1,6 +1,6 @@
-import { ParsedVideo } from '../googleSheets'
-import { extractSpotifyId } from '../spotify'
-import { YoutubeVideo } from '../youtube'
+import { ParsedVideo } from '../../googleSheets'
+import { extractSpotifyId } from '../../spotify'
+import { YoutubeVideo } from '../../youtube'
 
 export type BestTrackProps = {
   name: string

@@ -1,6 +1,11 @@
 # spreadsheet integration
 
 ### todos:
+- make s3 json files public for web assets
+  - lambda
+  - cloudfront dist
+  - on objectPut -> copyFile & create invalidation
+  - do I need to create new filenames to avoid caching issues @ browser
 - split lambda into step function? Or nah
 - make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
 - i guess if this is etl, I shouldn't call it extract tracks? idk man

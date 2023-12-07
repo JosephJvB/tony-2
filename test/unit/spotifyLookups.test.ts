@@ -1,12 +1,12 @@
-import * as spotifyLookups from '../../lambda/tasks/spotifyLookups'
-import * as spotify from '../../lambda/spotify'
+import * as spotifyLookups from '../../lib/tony2-lambda/tasks/spotifyLookups'
+import * as spotify from '../../lib/spotify'
 import {
   createBestTrack,
   createList,
   createMissingTrack,
   createSpotifyTrack,
 } from '../factories'
-import { BestTrack } from '../../lambda/tasks/extractTracks'
+import { BestTrack } from '../../lib/tony2-lambda/tasks/extractTracks'
 
 describe('spotifyLookups.ts', () => {
   jest.spyOn(console, 'log').mockImplementation(jest.fn())

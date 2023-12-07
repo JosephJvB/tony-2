@@ -6,7 +6,7 @@ import {
   trackToRow,
   upsertRows,
   videoToRow,
-} from '../googleSheets'
+} from '../../googleSheets'
 
 export default async function (
   nextParsedVideos: ParsedVideo[],

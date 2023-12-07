@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
-import * as extractTracks from '../../lambda/tasks/extractTracks'
-import * as spotify from '../../lambda/spotify'
-import { YoutubeVideo } from '../../lambda/youtube'
+import * as extractTracks from '../../lib/tony2-lambda/tasks/extractTracks'
+import * as spotify from '../../lib/spotify'
+import { YoutubeVideo } from '../../lib/youtube'
 import { createBestTrack, createList, createYoutubeVideo } from '../factories'
 
 describe('unit/extractTracks.ts', () => {

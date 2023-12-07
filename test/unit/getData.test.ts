@@ -1,8 +1,8 @@
-import * as s3 from '../../lambda/s3'
-import * as youtube from '../../lambda/youtube'
-import * as googleSheets from '../../lambda/googleSheets'
-import * as spotify from '../../lambda/spotify'
-import getData from '../../lambda/tasks/getData'
+import * as s3 from '../../lib/s3'
+import * as youtube from '../../lib/youtube'
+import * as googleSheets from '../../lib/googleSheets'
+import * as spotify from '../../lib/spotify'
+import getData from '../../lib/tony2-lambda/tasks/getData'
 import {
   createList,
   createMissingTrack,

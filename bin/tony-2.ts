@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
-import { Tony2Stack } from '../lib/tony-2-stack'
+import { Tony2Stack } from '../stacks/tony-2-stack'
+import { Tony2SupportStack } from '../stacks/tony-2-support-stack'
+
+export const MAIN_STACK_ID = 'Tony2Stack'
 
 const app = new cdk.App()
 // -c env=dev
 // const targetEnv = app.node.tryGetContext('env')
-new Tony2Stack(app, 'Tony2Stack', {
+const mainStack = new Tony2Stack(app, MAIN_STACK_ID, {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -17,4 +20,9 @@ new Tony2Stack(app, 'Tony2Stack', {
    * want to deploy the stack to. */
   env: { account: '355151872526', region: 'eu-west-2' },
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+})
+
+new Tony2SupportStack(app, 'Tony2SupportStack', {
+  env: { account: '355151872526', region: 'eu-west-2' },
+  backupsBucketName: mainStack.backupsBucket.bucketName,
 })

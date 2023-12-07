@@ -1,5 +1,5 @@
-import { MissingTrack } from '../googleSheets'
-import { SpotifyTrack } from '../spotify'
+import { MissingTrack } from '../../googleSheets'
+import { SpotifyTrack } from '../../spotify'
 import { BestTrack } from './extractTracks'
 
 export type FoundTrack = SpotifyTrack & {

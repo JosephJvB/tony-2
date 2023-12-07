@@ -1,13 +1,13 @@
 import { join } from 'path'
-import { putFile } from '../s3'
-import { getS3FriendlyDate } from '../util'
-import { getYoutubePlaylistItems } from '../youtube'
-import { SHEETS, getRows, rowToTrack, rowToVideo } from '../googleSheets'
+import { putFile } from '../../s3'
+import { getS3FriendlyDate } from '../../util'
+import { getYoutubePlaylistItems } from '../../youtube'
+import { SHEETS, getRows, rowToTrack, rowToVideo } from '../../googleSheets'
 import {
   getMyPlaylists,
   getPlaylistItems,
   getYearFromPlaylistName,
-} from '../spotify'
+} from '../../spotify'
 
 export type LoadedSpotifyPlaylist = {
   id: string

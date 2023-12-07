@@ -1,11 +1,21 @@
-import { setAccessToken, setBasicToken } from './spotify'
-import { loadSsmParams } from './ssm'
+import { setAccessToken, setBasicToken } from '../spotify'
+import { loadSsmParams } from '../ssm'
 import extractTracks from './tasks/extractTracks'
 import getData from './tasks/getData'
 import getTrackDiff from './tasks/getTrackDiff'
 import spotifyLookups from './tasks/spotifyLookups'
 import updatePlaylists from './tasks/updatePlaylists'
 import updateSpreadsheets from './tasks/updateSpreadsheets'
+
+export type LambdaEnv = {
+  GOOGLE_CLIENT_EMAIL_SSM: string
+  GOOGLE_PRIVATE_KEY_SSM: string
+  S3_BUCKET: string
+  SPOTIFY_CLIENT_ID_SSM: string
+  SPOTIFY_SECRET_SSM: string
+  SPOTIFY_REFRESH_TOKEN_SSM: string
+  YOUTUBE_API_KEY_SSM: string
+}
 
 export const handler = async () => {
   try {

@@ -1,5 +1,5 @@
-import * as spotify from '../../lambda/spotify'
-import * as updatePlaylists from '../../lambda/tasks/updatePlaylists'
+import * as spotify from '../../lib/spotify'
+import * as updatePlaylists from '../../lib/tony2-lambda/tasks/updatePlaylists'
 import {
   createFoundTrack,
   createList,

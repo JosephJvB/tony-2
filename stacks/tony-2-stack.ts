@@ -1,12 +1,15 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import { join } from 'path'
+import { LambdaEnv } from '../lib/tony2-lambda/tony2Lambda'
 
 export class Tony2Stack extends cdk.Stack {
+  public readonly backupsBucket: cdk.aws_s3.Bucket
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    const backupsBucket = new cdk.aws_s3.Bucket(this, 'backups', {
+    this.backupsBucket = new cdk.aws_s3.Bucket(this, 'backups', {
       versioned: false,
       bucketName: `${id.toLowerCase()}-backups`,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
@@ -63,8 +66,8 @@ export class Tony2Stack extends cdk.Stack {
         `/${id}/spotify/refresh-token`
       )
 
-    const lambdaEnv: NodeJS.ProcessEnv = {
-      S3_BUCKET: backupsBucket.bucketName,
+    const lambdaEnv: LambdaEnv = {
+      S3_BUCKET: this.backupsBucket.bucketName,
       GOOGLE_CLIENT_EMAIL_SSM: googleClientEmail.parameterName,
       GOOGLE_PRIVATE_KEY_SSM: googlePrivateKey.parameterName,
       SPOTIFY_CLIENT_ID_SSM: spotifyClientId.parameterName,
@@ -80,9 +83,9 @@ export class Tony2Stack extends cdk.Stack {
         memorySize: 1024,
         timeout: cdk.Duration.minutes(3),
         runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
-        entry: join(__dirname, '../lambda/lambda.ts'),
+        entry: join(__dirname, '../lib/tony2-lambda/tony2Lambda.ts'),
         handler: 'handler',
-        environment: lambdaEnv as Record<string, string>,
+        environment: lambdaEnv,
       }
     )
 
@@ -92,7 +95,7 @@ export class Tony2Stack extends cdk.Stack {
     spotifySecret.grantRead(daKingOfDaHighway)
     spotifyRefreshToken.grantRead(daKingOfDaHighway)
     youtubeApiKey.grantRead(daKingOfDaHighway)
-    backupsBucket.grantWrite(daKingOfDaHighway)
+    this.backupsBucket.grantWrite(daKingOfDaHighway)
     cronEvent.addTarget(
       new cdk.aws_events_targets.LambdaFunction(daKingOfDaHighway)
     )

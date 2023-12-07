@@ -1,12 +1,12 @@
-import { handler } from '../../lambda/lambda'
-import * as spotify from '../../lambda/spotify'
-import * as ssm from '../../lambda/ssm'
-import * as extractTracks from '../../lambda/tasks/extractTracks'
-import * as getData from '../../lambda/tasks/getData'
-import * as getTrackDiff from '../../lambda/tasks/getTrackDiff'
-import * as spotifyLookups from '../../lambda/tasks/spotifyLookups'
-import * as updatePlaylists from '../../lambda/tasks/updatePlaylists'
-import * as updateSpreadsheets from '../../lambda/tasks/updateSpreadsheets'
+import { handler } from '../../lib/tony2-lambda/tony2Lambda'
+import * as spotify from '../../lib/spotify'
+import * as ssm from '../../lib/ssm'
+import * as extractTracks from '../../lib/tony2-lambda/tasks/extractTracks'
+import * as getData from '../../lib/tony2-lambda/tasks/getData'
+import * as getTrackDiff from '../../lib/tony2-lambda/tasks/getTrackDiff'
+import * as spotifyLookups from '../../lib/tony2-lambda/tasks/spotifyLookups'
+import * as updatePlaylists from '../../lib/tony2-lambda/tasks/updatePlaylists'
+import * as updateSpreadsheets from '../../lib/tony2-lambda/tasks/updateSpreadsheets'
 import {
   createBestTrack,
   createList,
