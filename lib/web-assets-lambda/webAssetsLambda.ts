@@ -39,10 +39,11 @@ export const handler = async (event: S3Event) => {
         destination,
       })
       await copyFile(source, destination, {
-        ACL: 'public-read',
+        // issue with setting S3 ACLs
+        // ACL: 'public-read',
       })
 
-      cloudfrontPaths.push(destination.key)
+      cloudfrontPaths.push(`/${destination.key}`)
     }
 
     console.log({

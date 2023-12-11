@@ -16,7 +16,23 @@ export class Tony2WebAssetsStack extends cdk.Stack {
       versioned: false,
       bucketName: `${MAIN_STACK_ID.toLowerCase()}-web-assets`,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: new cdk.aws_s3.BlockPublicAccess({
+        blockPublicAcls: true,
+        ignorePublicAcls: true,
+        blockPublicPolicy: false,
+        restrictPublicBuckets: false,
+      }),
     })
+    // real trouble making bucket and objects public
+    // https://github.com/aws/aws-cdk/issues/26559
+    webAssetsBucket.addToResourcePolicy(
+      new cdk.aws_iam.PolicyStatement({
+        actions: ['s3:GetObject'],
+        effect: cdk.aws_iam.Effect.ALLOW,
+        principals: [new cdk.aws_iam.StarPrincipal()],
+        resources: [webAssetsBucket.arnForObjects('*')],
+      })
+    )
 
     const webAssetsCache = new cdk.aws_cloudfront.Distribution(
       this,
@@ -53,6 +69,7 @@ export class Tony2WebAssetsStack extends cdk.Stack {
     )
 
     webAssetsBucket.grantWrite(copyWebAssetsLambda)
+    // webAssetsBucket.grantPutAcl(copyWebAssetsLambda)
 
     webAssetsCache.grantCreateInvalidation(copyWebAssetsLambda)
 
