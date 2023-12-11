@@ -2,7 +2,7 @@
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
 import { Tony2Stack } from '../stacks/tony-2-stack'
-import { Tony2SupportStack } from '../stacks/tony-2-support-stack'
+import { Tony2WebAssetsStack } from '../stacks/tony-2-web-assets-stack'
 
 export const MAIN_STACK_ID = 'Tony2Stack'
 
@@ -22,7 +22,7 @@ const mainStack = new Tony2Stack(app, MAIN_STACK_ID, {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 })
 
-new Tony2SupportStack(app, 'Tony2SupportStack', {
+new Tony2WebAssetsStack(app, 'Tony2WebAssetsStack', {
   env: { account: '355151872526', region: 'eu-west-2' },
   backupsBucketName: mainStack.backupsBucket.bucketName,
 })
