@@ -35,15 +35,24 @@ export const handler = async () => {
      */
     const data = await getData()
 
+    const hasChanges = !data.toParse.length && !data.missingTracksToFind.length
+    if (!hasChanges) {
+      console.warn('no videos & no missing tracks to find, exiting early')
+      return
+    }
+
     // 3. parse youtube video descriptions
     const extracted = extractTracks(data.toParse)
     console.log('  >', extracted.nextTracks.length, 'youtube tracks to find')
 
     // 4. find tracks in spotify
-    const maps = await spotifyLookups(extracted.nextTracks, data.missingTracks)
+    const maps = await spotifyLookups(
+      extracted.nextTracks,
+      data.missingTracksToFind
+    )
 
     // 5. get diff
-    const diff = getTrackDiff(extracted.nextTracks, data.missingTracks, maps)
+    const diff = getTrackDiff(extracted.nextTracks, data.allMissingTracks, maps)
 
     // 6. update playlists
     await updatePlaylists(diff.found, data.spotifyPlaylists)

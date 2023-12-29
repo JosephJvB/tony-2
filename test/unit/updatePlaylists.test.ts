@@ -8,6 +8,7 @@ import {
 } from '../factories'
 
 describe('updatePlaylists.ts', () => {
+  jest.spyOn(console, 'log').mockImplementation(jest.fn())
   const createPlaylistSpy = jest
     .spyOn(spotify, 'createPlaylist')
     .mockImplementation(jest.fn())

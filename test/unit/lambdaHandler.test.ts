@@ -19,6 +19,7 @@ import {
 
 describe('lambda/index.handler', () => {
   jest.spyOn(console, 'log').mockImplementation(jest.fn())
+  jest.spyOn(console, 'warn').mockImplementation(jest.fn())
 
   const loadSsmParamsSpy = jest
     .spyOn(ssm, 'loadSsmParams')
@@ -53,25 +54,12 @@ describe('lambda/index.handler', () => {
     const mockData = {
       parsedVideos: [],
       toParse: [],
-      missingTracks: [],
+      allMissingTracks: [],
+      missingTracksToFind: [],
       spotifyPlaylists: [],
     }
-    const mockExtracted = {
-      nextVideoRows: [],
-      nextTracks: [],
-    }
-    const mockMaps = {
-      customIdMap: new Map(),
-      spotifyIdMap: new Map(),
-    }
-    const mockDiff = {
-      found: [],
-      missing: [],
-    }
+
     getDataSpy.mockResolvedValueOnce(mockData)
-    extractTracksSpy.mockReturnValueOnce(mockExtracted)
-    spotifyLookupsSpy.mockResolvedValueOnce(mockMaps)
-    getTrackDiffSpy.mockReturnValueOnce(mockDiff)
 
     await handler()
 
@@ -80,29 +68,11 @@ describe('lambda/index.handler', () => {
     expect(setAccessTokenSpy).toHaveBeenCalledTimes(1)
 
     expect(getDataSpy).toHaveBeenCalledTimes(1)
-    expect(extractTracksSpy).toHaveBeenCalledTimes(1)
-    expect(extractTracksSpy).toHaveBeenCalledWith(mockData.toParse)
-    expect(spotifyLookupsSpy).toHaveBeenCalledTimes(1)
-    expect(spotifyLookupsSpy).toHaveBeenCalledWith(
-      mockExtracted.nextTracks,
-      mockData.missingTracks
-    )
-    expect(getTrackDiffSpy).toHaveBeenCalledTimes(1)
-    expect(getTrackDiffSpy).toHaveBeenCalledWith(
-      mockExtracted.nextTracks,
-      mockData.missingTracks,
-      mockMaps
-    )
-    expect(updatePlaylistsSpy).toHaveBeenCalledTimes(1)
-    expect(updatePlaylistsSpy).toHaveBeenCalledWith(
-      mockDiff.found,
-      mockData.spotifyPlaylists
-    )
-    expect(updateSpreadsheetsSpy).toHaveBeenCalledTimes(1)
-    expect(updateSpreadsheetsSpy).toHaveBeenCalledWith(
-      [...mockData.parsedVideos, ...mockExtracted.nextVideoRows],
-      mockDiff.missing
-    )
+    expect(extractTracksSpy).toHaveBeenCalledTimes(0)
+    expect(spotifyLookupsSpy).toHaveBeenCalledTimes(0)
+    expect(getTrackDiffSpy).toHaveBeenCalledTimes(0)
+    expect(updatePlaylistsSpy).toHaveBeenCalledTimes(0)
+    expect(updateSpreadsheetsSpy).toHaveBeenCalledTimes(0)
   })
 
   it('toParse x5, parsedVideos x0, missingTracks x0, spotifyPlaylists x0, nextTracks x10, found x10', async () => {
@@ -115,7 +85,8 @@ describe('lambda/index.handler', () => {
     const mockData = {
       parsedVideos: [],
       toParse,
-      missingTracks: [],
+      allMissingTracks: [],
+      missingTracksToFind: [],
       spotifyPlaylists: [],
     }
     const mockExtracted = {
@@ -156,12 +127,12 @@ describe('lambda/index.handler', () => {
     expect(spotifyLookupsSpy).toHaveBeenCalledTimes(1)
     expect(spotifyLookupsSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks
+      mockData.missingTracksToFind
     )
     expect(getTrackDiffSpy).toHaveBeenCalledTimes(1)
     expect(getTrackDiffSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks,
+      mockData.allMissingTracks,
       mockMaps
     )
     expect(updatePlaylistsSpy).toHaveBeenCalledTimes(1)
@@ -187,7 +158,8 @@ describe('lambda/index.handler', () => {
     const mockData = {
       parsedVideos,
       toParse,
-      missingTracks: [],
+      allMissingTracks: [],
+      missingTracksToFind: [],
       spotifyPlaylists: [],
     }
     const mockExtracted = {
@@ -228,12 +200,12 @@ describe('lambda/index.handler', () => {
     expect(spotifyLookupsSpy).toHaveBeenCalledTimes(1)
     expect(spotifyLookupsSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks
+      mockData.missingTracksToFind
     )
     expect(getTrackDiffSpy).toHaveBeenCalledTimes(1)
     expect(getTrackDiffSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks,
+      mockData.allMissingTracks,
       mockMaps
     )
     expect(updatePlaylistsSpy).toHaveBeenCalledTimes(1)
@@ -250,7 +222,7 @@ describe('lambda/index.handler', () => {
 
   it('toParse x5, parsedVideos x5, missingTracks x5, spotifyPlaylists x2, nextTracks x10, found x10', async () => {
     const spotifyPlaylists = createList(createLoadedSpotifyPlaylist, 2, 10)
-    const missingTracks = createList(createMissingTrack, 5)
+    const allMissingTracks = createList(createMissingTrack, 5)
     const parsedVideos = createList(createParsedVideo, 5)
     const toParse = createList(createYoutubeVideo, 5)
     const bestTracks = createList(createBestTrack, 10)
@@ -261,7 +233,8 @@ describe('lambda/index.handler', () => {
     const mockData = {
       parsedVideos,
       toParse,
-      missingTracks,
+      allMissingTracks,
+      missingTracksToFind: allMissingTracks.filter((t) => !!t.spotify_ids),
       spotifyPlaylists,
     }
     const mockExtracted = {
@@ -302,12 +275,12 @@ describe('lambda/index.handler', () => {
     expect(spotifyLookupsSpy).toHaveBeenCalledTimes(1)
     expect(spotifyLookupsSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks
+      mockData.missingTracksToFind
     )
     expect(getTrackDiffSpy).toHaveBeenCalledTimes(1)
     expect(getTrackDiffSpy).toHaveBeenCalledWith(
       mockExtracted.nextTracks,
-      mockData.missingTracks,
+      mockData.allMissingTracks,
       mockMaps
     )
     expect(updatePlaylistsSpy).toHaveBeenCalledTimes(1)
