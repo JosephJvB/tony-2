@@ -206,5 +206,15 @@ describe('unit/extractTracks.ts', () => {
         'https://www.youtube.com/watch?v=UhE5io7Nyk4&pp=ygUYU2FtcGhhIC0gRGFuY2luZyBDaXJjbGVz'
       )
     })
+
+    it('can get youtube props: Stove God Cooks -  Melo Chip and a Brick', () => {
+      const input =
+        'Stove God Cooks -  Melo Chip and a Brick\nhttps://www.youtube.com/watch?v=ypuU5_E7dI8&pp=ygUoU3RvdmUgR29kIENvb2tzIC0gIE1lbG8gQ2hpcCBhbmQgYSBCcmljaw%3D%3D'
+
+      const track = extractTracks.getYoutubeTrackProps(input)
+
+      expect(track.name).toBe('Melo Chip and a Brick')
+      expect(track.artist).toBe('Stove God Cooks')
+    })
   })
 })

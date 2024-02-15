@@ -92,9 +92,9 @@ export const getYoutubeTrackProps = (line: string) => {
   const [artist, name] = youtubeTrack.split(' - ')
 
   return {
-    name: name ?? '',
-    artist: artist ?? '',
-    link: link ?? '',
+    name: name?.trim() ?? '',
+    artist: artist?.trim() ?? '',
+    link: link?.trim() ?? '',
   }
 }
 
