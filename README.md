@@ -1,3 +1,5 @@
+ayo my tests are taking 30seconds to run this is FARCICAL
+
 # Welcome to your CDK TypeScript project
 
 change outdir
