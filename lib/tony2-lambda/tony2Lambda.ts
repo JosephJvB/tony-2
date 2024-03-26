@@ -35,8 +35,8 @@ export const handler = async () => {
      */
     const data = await getData()
 
-    const hasChanges = !data.toParse.length && !data.missingTracksToFind.length
-    if (!hasChanges) {
+    const noChanges = !data.toParse.length && !data.missingTracksToFind.length
+    if (noChanges) {
       console.warn('no videos & no missing tracks to find, exiting early')
       return
     }
