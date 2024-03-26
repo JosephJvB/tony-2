@@ -8,9 +8,9 @@ export type HasSpotifyId = BestTrack & {
 
 export default async function (
   fromVideoDescriptions: BestTrack[],
-  missingTracks: MissingTrack[]
+  missingTracksToFind: MissingTrack[]
 ) {
-  const sheetSpotifyIds = missingTracks
+  const sheetSpotifyIds = missingTracksToFind
     .filter((t) => !!t.spotify_ids)
     .flatMap((t) => t.spotify_ids.split(',').map((i) => i.trim()))
 
@@ -33,11 +33,11 @@ export default async function (
 
   // exclude missingTracks
   // already failed to be found by search on previous run
-  // only search for tracks with at least
+  // only search for tracks with at least name and artist
   const toFind = fromVideoDescriptions.filter((t) => {
-    const hasValidSearchProps = t.name && t.artist
     const alreadyFound = t.spotifyId && spotifyIdMap.has(t.spotifyId)
-    return hasValidSearchProps && !alreadyFound
+    const hasValidSearchProps = t.name && t.artist
+    return !alreadyFound && hasValidSearchProps
   })
   console.log('  >', toFind.length, 'tracks to find in spotify')
 

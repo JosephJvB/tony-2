@@ -66,7 +66,12 @@ describe('getData.ts', () => {
       expect(results).toEqual({
         parsedVideos: parsedVideoRows.map((r) => googleSheets.rowToVideo(r)),
         toParse: youtubeVideos.slice(parsedVideoRows.length),
-        missingTracks: missingTrackRows.map((r) => googleSheets.rowToTrack(r)),
+        allMissingTracks: missingTrackRows.map((r) =>
+          googleSheets.rowToTrack(r)
+        ),
+        missingTracksToFind: missingTrackRows
+          .map((r) => googleSheets.rowToTrack(r))
+          .filter((t) => !!t.spotify_ids),
         spotifyPlaylists,
       })
     })
@@ -119,7 +124,12 @@ describe('getData.ts', () => {
       expect(results).toEqual({
         parsedVideos: parsedVideoRows.map((r) => googleSheets.rowToVideo(r)),
         toParse: youtubeVideos.slice(parsedVideoRows.length),
-        missingTracks: missingTrackRows.map((r) => googleSheets.rowToTrack(r)),
+        allMissingTracks: missingTrackRows.map((r) =>
+          googleSheets.rowToTrack(r)
+        ),
+        missingTracksToFind: missingTrackRows
+          .map((r) => googleSheets.rowToTrack(r))
+          .filter((t) => !!t.spotify_ids),
         spotifyPlaylists: spotifyPlaylists.map((p) => ({
           id: p.id,
           name: p.name,

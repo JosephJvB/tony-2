@@ -34,10 +34,10 @@ export default async function () {
     SHEETS.MISSING_TRACKS.NAME,
     SHEETS.MISSING_TRACKS.RANGES.ALL_ROWS
   )
-  const missingTracks = missingTrackRows.map((r) => rowToTrack(r))
+  const allMissingTracks = missingTrackRows.map((r) => rowToTrack(r))
   filesToSave.push({
     name: 'spreadsheet-missing-tracks.json',
-    data: JSON.stringify(missingTracks, null, 2),
+    data: JSON.stringify(allMissingTracks, null, 2),
   })
 
   console.log('  > getRows(parsed-youtube-videos)')
@@ -83,10 +83,13 @@ export default async function () {
   const beenParsed = new Set(parsedVideos.map((v) => v.id))
   const toParse = youtubeVideos.filter((v) => !beenParsed.has(v.id))
 
+  const missingTracksToFind = allMissingTracks.filter((t) => !!t.spotify_ids)
+
   return {
     parsedVideos,
     toParse,
-    missingTracks,
+    allMissingTracks,
+    missingTracksToFind,
     spotifyPlaylists,
   }
 }

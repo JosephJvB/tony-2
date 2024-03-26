@@ -23,11 +23,11 @@ export class Tony2Stack extends cdk.Stack {
 
     const cronEvent = new cdk.aws_events.Rule(this, 'dailyEvent', {
       // weekly track roundup videos released on a monday,
-      // run weekly, tuesday, 9am
-      // cron(0 9 ? * TUE *)
+      // run weekly, tuesday, 7am
+      // cron(0 7? * TUE *)
       schedule: cdk.aws_events.Schedule.cron({
         weekDay: 'TUE',
-        hour: '9',
+        hour: '7',
         minute: '0',
       }),
     })

@@ -1,14 +1,20 @@
 # spreadsheet integration
 
 ### todos:
-- make s3 json files public for web assets
-  - lambda
-  - cloudfront dist
-  - on objectPut -> copyFile & create invalidation
+- [x] make s3 json files public for web assets
+  - [x] lambda
+  - [x] cloudfront dist
+  - [x] on objectPut -> copyFile & create invalidation
   - do I need to create new filenames to avoid caching issues @ browser
 - split lambda into step function? Or nah
 - make parsed video rows that should be BestTracks with total_tracks = 0 background colour red
 - i guess if this is etl, I shouldn't call it extract tracks? idk man
+- not saving json data about found tracks, ie: which track from which video
+  - Kinda wanna make a website displaying stats about the tracks / videos
+  - would need that ^
+- could make a thing like: how much of a melon head are you
+  - how many of tony's liked songs are in your "your music" library
+  - https://developer.spotify.com/documentation/web-api/reference/check-users-saved-tracks
 
 
 ### it's called system design babes look it up x
