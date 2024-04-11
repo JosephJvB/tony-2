@@ -69,6 +69,8 @@ export const getTracksForVideo = (v: YoutubeVideo) => {
     }))
 }
 
+// The following methods should have lots of tests
+// They are parsing the YT description, which is really volatile human inputted yadda yadda
 export const getBestTracksSection = (v: YoutubeVideo) => {
   const sections = v.snippet.description
     .replace(/–/g, '-')

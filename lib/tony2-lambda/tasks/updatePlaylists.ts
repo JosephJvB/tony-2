@@ -13,28 +13,30 @@ export default async function (
   nextTracks: FoundTrack[],
   spotifyPlaylists: LoadedSpotifyPlaylist[]
 ) {
-  const trackMap = new Map<number, SpotifyTrack[]>()
+  const nextTracksByYear = new Map<number, SpotifyTrack[]>()
   nextTracks.forEach((t) => {
-    const soFar = trackMap.get(t.year) ?? []
-    trackMap.set(t.year, [...soFar, t])
+    const soFar = nextTracksByYear.get(t.year) ?? []
+    nextTracksByYear.set(t.year, [...soFar, t])
   })
 
-  console.log('  >', trackMap.size, 'playlists to update')
+  console.log('  >', nextTracksByYear.size, 'playlists to update')
 
-  const playlistMap = new Map<number, LoadedSpotifyPlaylist>()
+  const playlistByYear = new Map<number, LoadedSpotifyPlaylist>()
   spotifyPlaylists.forEach((p) => {
     const y = getYearFromPlaylistName(p.name)
     if (y) {
-      playlistMap.set(y, p)
+      playlistByYear.set(y, p)
     }
   })
 
-  for (const [year, tracks] of trackMap.entries()) {
-    const loadedPlaylist = playlistMap.get(year)
-    let playlistId = loadedPlaylist?.id
-    let playlistDescription = loadedPlaylist?.description
+  for (const [year, nextTracks] of nextTracksByYear.entries()) {
+    const existingPlaylist = playlistByYear.get(year)
 
-    if (!loadedPlaylist) {
+    let playlistId = existingPlaylist?.id
+    let playlistDescription = existingPlaylist?.description
+    const existingTrackIds = new Set(existingPlaylist?.trackIds ?? [])
+
+    if (!existingPlaylist) {
       console.log('  > creating playlist for year', year)
       const createdPaylist = await createPlaylist(year)
       playlistId = createdPaylist.id
@@ -48,11 +50,10 @@ export default async function (
       throw new Error(`failed to find/create playlistId, ${vars}`)
     }
 
-    const existingTrackIds = new Set<string>(loadedPlaylist?.trackIds ?? [])
     console.log('  > playlist', year, 'has', existingTrackIds.size, 'tracks')
     const toAdd = [
       ...new Set(
-        tracks.filter((t) => !existingTrackIds.has(t.id)).map((t) => t.id)
+        nextTracks.filter((t) => !existingTrackIds.has(t.id)).map((t) => t.id)
       ),
     ]
     console.log('  > adding', toAdd.length, 'tracks to playlist', year)

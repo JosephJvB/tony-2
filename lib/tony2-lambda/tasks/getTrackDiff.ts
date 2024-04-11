@@ -8,7 +8,7 @@ export type FoundTrack = SpotifyTrack & {
 
 export default function (
   fromVideoDescriptions: BestTrack[],
-  missingTracks: MissingTrack[],
+  fromGoogleSheets: MissingTrack[],
   maps: {
     spotifyIdMap: Map<string, SpotifyTrack>
     customIdMap: Map<string, SpotifyTrack>
@@ -39,7 +39,7 @@ export default function (
     }
   })
 
-  missingTracks.forEach((t) => {
+  fromGoogleSheets.forEach((t) => {
     const ids = (t.spotify_ids ?? '').split(',').map((i) => i.trim())
 
     const stillMissing: string[] = []
