@@ -8,9 +8,9 @@ export type HasSpotifyId = BestTrack & {
 
 export default async function (
   fromVideoDescriptions: BestTrack[],
-  missingTracksToFind: MissingTrack[]
+  fromGoogleSheets: MissingTrack[]
 ) {
-  const sheetSpotifyIds = missingTracksToFind
+  const sheetSpotifyIds = fromGoogleSheets
     .filter((t) => !!t.spotify_ids)
     .flatMap((t) => t.spotify_ids.split(',').map((i) => i.trim()))
 
