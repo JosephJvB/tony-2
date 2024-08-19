@@ -25,10 +25,16 @@ export class Tony2Stack extends cdk.Stack {
       // weekly track roundup videos released on a monday,
       // run weekly, tuesday, 7am
       // cron(0 7? * TUE *)
+      // schedule: cdk.aws_events.Schedule.cron({
+      //   weekDay: 'TUE',
+      //   hour: '7',
+      //   minute: '0',
+      // }),
+      // but i'm gonna have it run daily so it'll handle failures better
+      // 8:15 so maybe I can listen to new songs on my bike to work
       schedule: cdk.aws_events.Schedule.cron({
-        weekDay: 'TUE',
-        hour: '7',
-        minute: '0',
+        hour: '8',
+        minute: '15',
       }),
     })
 
