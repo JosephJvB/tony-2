@@ -86,7 +86,7 @@ export class Tony2Stack extends cdk.Stack {
         entry: join(__dirname, '../lib/tony2-lambda/tony2Lambda.ts'),
         handler: 'handler',
         environment: lambdaEnv,
-        retryAttempts: 3,
+        retryAttempts: 2,
       }
     )
 
