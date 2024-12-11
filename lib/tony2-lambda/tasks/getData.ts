@@ -52,7 +52,13 @@ export default async function () {
   })
 
   const spotifyPlaylists: Array<LoadedSpotifyPlaylist> = []
+  console.log('  > getMyPlaylists()')
   const allSpotifyPlaylists = await getMyPlaylists()
+  console.log('  > found', allSpotifyPlaylists.length, 'spotify playlists')
+  console.log(
+    'is there a null one?',
+    allSpotifyPlaylists.filter((p) => !p).length
+  )
   for (const playlist of allSpotifyPlaylists) {
     const year = getYearFromPlaylistName(playlist.name)
     if (year === null) {
@@ -67,6 +73,7 @@ export default async function () {
       trackIds: items.map((i) => i.track.id),
     })
   }
+  console.log('  > loaded tracks for', spotifyPlaylists.length, 'playlists')
   filesToSave.push({
     name: 'spotify-playlists.json',
     data: JSON.stringify(spotifyPlaylists, null, 2),

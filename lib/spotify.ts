@@ -274,7 +274,7 @@ export const getMyPlaylists = async () => {
 
     let hasMore = false
     do {
-      const res: AxiosResponse<PaginatedResponse<SpotifyPlaylist>> =
+      const res: AxiosResponse<PaginatedResponse<SpotifyPlaylist | undefined>> =
         await axios({
           method: 'get',
           url: `${API_BASE_URL}/me/playlists`,
@@ -287,7 +287,13 @@ export const getMyPlaylists = async () => {
           },
         })
 
-      myPlaylists.push(...res.data.items)
+      myPlaylists.push(
+        /**
+         * bugfix:
+         * found I was receiving null playlists!
+         */
+        ...res.data.items.filter((p): p is SpotifyPlaylist => !!p)
+      )
       hasMore = !!res.data.next
     } while (hasMore)
 
